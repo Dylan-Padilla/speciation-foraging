@@ -655,7 +655,8 @@ legend('topright', legend = c(expression(mu[1]),
 net.div <- mcmc.fit.full[ , grep('lambda', colnames(mcmc.fit.full))]-
     mcmc.fit.full[ , grep('mu', colnames(mcmc.fit.full))]
 
-par(mar = c(5, 7, 2.5, 3.1), mgp = c(2.5, 1, 0), col.lab = 'black')
+##par(mar = c(5, 7, 2.5, 3.1), mgp = c(2.5, 1, 0), col.lab = 'black')
+par(mar = c(7, 4, 1, 0.5), mgp = c(2.5, 1, 0), col.lab = 'black')
 plot(NA, ylim = c(0, 70), xlim = c(0, 0.30),
      axes = FALSE, ylab = '', xlab = '')
 grid()
@@ -670,7 +671,7 @@ legend('topright', legend = c(expression(lambda-mu[1]),
                               expression(lambda-mu[3])),
        fill = colors, bty = 'n')
 
-mtext('C', at = -0.2, side = 3, line = 1.1)
+##mtext('C', at = -0.2, side = 3, line = 1.1)
 
 ##dev.off()
 
