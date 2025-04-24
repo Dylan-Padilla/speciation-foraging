@@ -247,6 +247,11 @@ times <- h[ii]
 lineages <- lineages[ii, ]
 
 
+##png('./imgs/figureS2.png', width = 7, height = 7, units = 'in',
+##    res = 360)
+##pdf('./imgs/figuer1.pdf')
+
+
 layout(matrix(c(0, 0, 0, 0,
                 1, 1, 2, 2,
                 1, 1, 2, 2,
@@ -289,6 +294,7 @@ axis(1, at = round(seq(0, max(nodeHeights(lizard.maps.sym[[idx]])),
      label = round(seq(max(nodeHeights(lizard.maps.sym[[idx]])), 0,
                        length.out = 4), 0), cex.axis = 0.8)
 axis(2, las = 1, cex.axis = 0.8)
+mtext('A', side = 2, at = 1200, las = 2, line = 3)
 
 
 ## create plot area
@@ -316,7 +322,10 @@ axis(1, at = round(seq(0, max(nodeHeights(lizard.maps.sym[[idx]])),
      label = round(seq(max(nodeHeights(lizard.maps.sym[[idx]])), 0,
                        length.out = 4), 0), cex.axis = 0.8)
 axis(2, las = 1, cex.axis = 0.8)
+mtext('B', side = 2, at = 590, las = 2, line = 3)
 box()
+
+##dev.off()
 
 
 ## plotting arc phylogeny for visualization
@@ -1724,6 +1733,7 @@ legend('bottomright',
        pt.bg = c('#39568CFF', 'green4', '#DCE319FF'),
        col = c('#39568CFF', 'green4', '#DCE319FF'), lwd = 1,
        bty = 'n', cex = 0.8)
+mtext('A', side = 2, line = 2.7, at = 45, las = 2)
 
 
 ## Distribution of residuals
@@ -1761,7 +1771,7 @@ legend('topleft',
        fill = alpha(c('#39568CFF', 'green4',
                       '#DCE319FF'), 0.3),
        bty = 'n', cex = 0.8)
-
+mtext('B', side = 2, line = 3.1, at = 0.127, las = 2)
 
 ##dev.off()
 
@@ -1966,9 +1976,9 @@ plot1 <- xyplot(genome.size ~ max.body.mass | Foraging.mode,
        par.settings = list(layout.widths =
                                list(ylab.axis.padding = 1)),
        superpose = TRUE, lwd = 2, type = "p",
-       ylab = '',       
-       xlab = expression("Maximum body mass"~log[10]+1~(g)),
-       layout = c(3, 3), grid = TRUE,
+       ylab = expression("Genome size"~log[10]~(Mb)),       
+       xlab = expression("Maximum body mass"~log[10]~(g)),
+       layout = c(1, 3), grid = TRUE,
        pch = 21, strip = TRUE, group = Foraging.mode,
        col = cols, aspect = 0.77, bg = "black",
        scale = list(alternating = 1, tck = c(1, 0)))
@@ -1976,8 +1986,8 @@ plot1 <- xyplot(genome.size ~ max.body.mass | Foraging.mode,
 plot2 <- xyplot(genome.size ~ max.body.mass | Foraging.mode,
        data = pred.mod,
        superpose = TRUE, lwd = 2, type = "l",
-#       ylab = expression("Genome size"~log[10]~(Mb)),       
-       layout = c(3, 3), grid = FALSE,
+       ylab = expression("Genome size"~log[10]~(Mb)),       
+       layout = c(1, 3), grid = FALSE,
        col.line = c("#39568CFF", "green4", "#DCE319FF"),
        strip = TRUE, group = Foraging.mode,
        col = cols, aspect = 0.77, bg = "black",
@@ -2732,16 +2742,23 @@ carolinensis.nd$CHROM[carolinensis.nd$CHROM == 'CM069374.1'] <- 'Y'
 str(carolinensis.nd)
 
 pi.chr.carolinensis <- aggregate(carolinensis.nd$PI,
-                           list(carolinensis.nd$CHROM), mean)
+                                 list(carolinensis.nd$CHROM), mean)
+pi.chr.carolinensis_sd <- aggregate(carolinensis.nd$PI,
+                           list(carolinensis.nd$CHROM), sd)
 colnames(pi.chr.carolinensis) <- c('CHROM', 'pi')
+colnames(pi.chr.carolinensis_sd) <- c('CHROM', 'sd')
 head(pi.chr.carolinensis)
+head(pi.chr.carolinensis_sd)
 
 chrom <- c('chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6',
            'X', 'Y')
 
 pi.chr.carolinensis <- pi.chr.carolinensis[pi.chr.carolinensis$CHROM %in% chrom, ]
+pi.chr.carolinensis_sd <- pi.chr.carolinensis_sd[pi.chr.carolinensis_sd$CHROM %in%
+                                                 chrom, ]
 
-pi.chr.carolinensis
+
+pi.chr.carolinensis$sd <- pi.chr.carolinensis_sd$sd
 str(pi.chr.carolinensis)
 
 value <- 1:length(pi.chr.carolinensis$CHROM)
@@ -2749,15 +2766,24 @@ par(mar = c(5.5, 5.4, 2, 1), mgp = c(4, 1, 0))
 plot(pi.chr.carolinensis$pi ~ value, type = 'n',
      pch = 16, col = '#DCE319FF',
      ylab = expression('Nucleotide diversity'~(pi)),
-     xlab = 'Genomic position', las = 1, xaxt = 'n')
+     xlab = 'Genomic position', las = 1, xaxt = 'n',
+     ylim = c(min(pi.chr.carolinensis$pi-pi.chr.carolinensis$sd),
+              max(pi.chr.carolinensis$pi+pi.chr.carolinensis$sd)))
 grid()
 par(new = TRUE)
 plot(pi.chr.carolinensis$pi ~ value, type = 'b',
      pch = 16, col = '#DCE319FF', ylab = '',
-     xlab = ' ', axes = FALSE)
+     xlab = ' ', axes = FALSE,
+     ylim = c(min(pi.chr.carolinensis$pi-pi.chr.carolinensis$sd),
+              max(pi.chr.carolinensis$pi+pi.chr.carolinensis$sd)))
+segments(1:nrow(pi.chr.carolinensis),
+         pi.chr.carolinensis$pi+pi.chr.carolinensis$sd,
+         1:nrow(pi.chr.carolinensis),
+         pi.chr.carolinensis$pi-pi.chr.carolinensis$sd,
+         lwd = 2.2, col = '#DCE319FF')
 axis(side = 1, at = 1:length(pi.chr.carolinensis$CHROM),
      labels = FALSE)
-text(x = 1:length(pi.chr.carolinensis$CHROM), y = 0.0007, 
+text(x = 1:length(pi.chr.carolinensis$CHROM), y = -0.0007, 
      labels = pi.chr.carolinensis$CHROM, srt = 45, xpd = NA,
      cex = 0.8)
 
@@ -2960,8 +2986,13 @@ str(muralis.nd)
 
 pi.chr.muralis <- aggregate(muralis.nd$PI,
                            list(muralis.nd$CHROM), mean)
+pi.chr.muralis_sd <- aggregate(muralis.nd$PI,
+                           list(muralis.nd$CHROM), sd)
+
 colnames(pi.chr.muralis) <- c('CHROM', 'pi')
+colnames(pi.chr.muralis_sd) <- c('CHROM', 'sd')
 head(pi.chr.muralis)
+head(pi.chr.muralis_sd)
 
 chrom <- c('chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6',
   'chr7', 'chr8', 'chr9', 'chr10', 'chr11', 'chr12',
@@ -2976,21 +3007,38 @@ for(i in chrom){
 }
 pi.chr.muralis <- ordered
 
+pi.chr.muralis_sd <- pi.chr.muralis_sd[pi.chr.muralis_sd$CHROM %in% chrom, ]
+ordered <- data.frame()
+for(i in chrom){
+    obj <- pi.chr.muralis_sd[pi.chr.muralis_sd$CHROM == i, ]
+    ordered <- rbind(ordered, obj)
+}
+pi.chr.muralis_sd <- ordered
+pi.chr.muralis$sd <- pi.chr.muralis_sd$sd
 
 value <- 1:length(pi.chr.muralis$CHROM)
 par(mar = c(5.5, 5.4, 2, 1), mgp = c(4, 1, 0))
 plot(pi.chr.muralis$pi ~ value, type = 'n',
      pch = 16, col = '#39568CFF',
      ylab = expression('Nucleotide diversity'~(pi)),
-     xlab = 'Genomic position', las = 1, xaxt = 'n')
+     xlab = 'Genomic position', las = 1, xaxt = 'n',
+     ylim = c(min(pi.chr.muralis$pi-pi.chr.muralis$sd),
+              max(pi.chr.muralis$pi+pi.chr.muralis$sd)))
 grid()
 par(new = TRUE)
 plot(pi.chr.muralis$pi ~ value, type = 'b',
      pch = 16, col = '#39568CFF', ylab = '',
-     xlab = ' ', axes = FALSE)
+     xlab = ' ', axes = FALSE,
+     ylim = c(min(pi.chr.muralis$pi-pi.chr.muralis$sd),
+              max(pi.chr.muralis$pi+pi.chr.muralis$sd)))
+segments(1:nrow(pi.chr.muralis),
+         pi.chr.muralis$pi+pi.chr.muralis$sd,
+         1:nrow(pi.chr.muralis),
+         pi.chr.muralis$pi-pi.chr.muralis$sd,
+         lwd = 2.2, col = '#39568CFF')
 axis(side = 1, at = 1:length(pi.chr.muralis$CHROM),
      labels = FALSE)
-text(x = 1:length(pi.chr.muralis$CHROM), y = 0.007, 
+text(x = 1:length(pi.chr.muralis$CHROM), y = 0.0029, 
      labels = pi.chr.muralis$CHROM, srt = 45, xpd = NA,
      cex = 0.8)
 
@@ -3090,22 +3138,29 @@ plot(pi.chr.carolinensis$pi ~ value, type = 'n',
      pch = 16, col = '#DCE319FF',
      ylab = expression('Nucleotide diversity'~(pi)),
      xlab = '', las = 1, xaxt = 'n', cex.lab = 1.5,
-     ylim = c(min(pi.chr.carolinensis$pi), max(pi.chr.muralis$pi)))
+     ylim = c(min(pi.chr.carolinensis$pi-pi.chr.carolinensis$sd),
+              max(pi.chr.muralis$pi+pi.chr.muralis$sd)))     
 grid()
 par(new = TRUE)
 plot(pi.chr.carolinensis$pi ~ value, type = 'b',
      pch = 16, col = '#DCE319FF', ylab = '',
      xlab = ' ', axes = FALSE,
-     ylim = c(min(pi.chr.carolinensis$pi), max(pi.chr.muralis$pi)))
+ylim = c(min(pi.chr.carolinensis$pi-pi.chr.carolinensis$sd),
+              max(pi.chr.muralis$pi+pi.chr.muralis$sd)))
 legend('topleft', legend = 'n = 5', bty = 'n')
+segments(1:nrow(pi.chr.carolinensis),
+         pi.chr.carolinensis$pi+pi.chr.carolinensis$sd,
+         1:nrow(pi.chr.carolinensis),
+         pi.chr.carolinensis$pi-pi.chr.carolinensis$sd,
+         lwd = 2.2, col = '#DCE319FF')
 axis(side = 1, at = 1:length(pi.chr.carolinensis$CHROM),
      labels = FALSE)
-text(x = 1:length(pi.chr.carolinensis$CHROM), y = -0.001, 
+text(x = 1:length(pi.chr.carolinensis$CHROM), y = -0.0027, 
      labels = pi.chr.carolinensis$CHROM, srt = 45, xpd = NA,
      cex = 1)
 caro.img <- readPNG('imgs/anole.png', native = TRUE)
-rasterImage(caro.img, 1, 0.002, 2, 0.0037)
-mtext('A', side = 2, at = 0.020, las = 2, line = 4.5)
+rasterImage(caro.img, 1, 0.018, 2, 0.020)
+mtext('A', side = 2, at = 0.027, las = 2, line = 4.5)
 
 
 ## Podarcis muralis (pi)
@@ -3117,22 +3172,29 @@ plot(pi.chr.muralis$pi ~ value, type = 'n',
      pch = 16, col = '#39568CFF',
      ylab = '',
      xlab = '', las = 1, xaxt = 'n',
-     ylim = c(min(pi.chr.carolinensis$pi), max(pi.chr.muralis$pi)))
+     ylim = c(min(pi.chr.carolinensis$pi-pi.chr.carolinensis$sd),
+              max(pi.chr.muralis$pi+pi.chr.muralis$sd)))
 grid()
 par(new = TRUE)
 plot(pi.chr.muralis$pi ~ value, type = 'b',
      pch = 16, col = '#39568CFF', ylab = '',
      xlab = ' ', axes = FALSE,
-     ylim = c(min(pi.chr.carolinensis$pi), max(pi.chr.muralis$pi)))
+     ylim = c(min(pi.chr.carolinensis$pi-pi.chr.carolinensis$sd),
+              max(pi.chr.muralis$pi+pi.chr.muralis$sd)))     
 axis(side = 1, at = 1:length(pi.chr.muralis$CHROM),
      labels = FALSE)
 legend('topleft', legend = 'n = 5', bty = 'n')
-text(x = 1:length(pi.chr.muralis$CHROM), y = -0.001, 
+segments(1:nrow(pi.chr.muralis),
+         pi.chr.muralis$pi+pi.chr.muralis$sd,
+         1:nrow(pi.chr.muralis),
+         pi.chr.muralis$pi-pi.chr.muralis$sd,
+         lwd = 2.2, col = '#39568CFF')
+text(x = 1:length(pi.chr.muralis$CHROM), y = -0.0027, 
      labels = pi.chr.muralis$CHROM, srt = 45, xpd = NA,
      cex = 0.8)
 muralis.img <- readPNG('imgs/p.muralis.png', native = TRUE)
-rasterImage(muralis.img, 1, 0.003, 5, 0.0048)
-mtext('B', side = 2, at = 0.020, las = 2, line = 2.5)
+rasterImage(muralis.img, 1, 0.018, 5, 0.021)
+mtext('B', side = 2, at = 0.027, las = 2, line = 2.5)
 
 par(xpd = TRUE)
 mtext('Genomic position', at = -3, side = 1, line = 3)
