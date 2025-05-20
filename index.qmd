@@ -299,18 +299,19 @@ mtext('A', side = 2, at = 1200, las = 2, line = 3)
 
 ## create plot area
 
-plot(NA, xlim = range(times), ylim = c(0, max(lineages)),
-     ylab = "Lineages", bty = "n", las = 1,
+par(mgp = c(2.5, 1, 0))
+plot(NA, xlim = range(times), ylim = c(0, max(log1p(lineages))),
+     ylab = expression('Lineages'~(log[1+p])), bty = "n", las = 1,
      xlab = "Time (mya)", axes = FALSE)
 grid()
 
 ## add lineages through time for each type
 
-lines(times, lineages[ , 1], type = "s",
+lines(times, log1p(lineages[ , 1]), type = "s",
       lwd = 3, col = '#39568CFF')
-lines(times, lineages[ , 2], type = "s",
+lines(times, log1p(lineages[ , 2]), type = "s",
       col = 'green4', lwd = 3)
-lines(times, lineages[ , 3], type = "s",
+lines(times, log1p(lineages[ , 3]), type = "s",
       col = '#DCE319FF', lwd = 4)
 
 legend("topleft", levels(as.factor(map.spp)),
@@ -322,7 +323,7 @@ axis(1, at = round(seq(0, max(nodeHeights(lizard.maps.sym[[idx]])),
      label = round(seq(max(nodeHeights(lizard.maps.sym[[idx]])), 0,
                        length.out = 4), 0), cex.axis = 0.8)
 axis(2, las = 1, cex.axis = 0.8)
-mtext('B', side = 2, at = 590, las = 2, line = 3)
+mtext('A', side = 2, at = 7, las = 2, line = 3)
 box()
 
 ##dev.off()
@@ -1429,7 +1430,7 @@ plot(repro.output ~ body.mass, data = data.rep.out,
      pch = 21,
      bg = cols[as.numeric(as.factor(data.rep.out$Foraging.mode))],
      col = 'black', las = 1, xlab = expression("Maximum body mass"~log[10]~(g)),
-     ylab = expression("Clutch size"~x~"clutches per year"), type = 'p')
+     ylab = expression(Log[10]~"clutch size"~x~"clutches per year"), type = 'p')
 
 lines(active$rep.out ~ active$body.mass,
       data = active, lwd = 2.5, col = '#39568CFF')
@@ -1446,6 +1447,7 @@ legend('bottomright',
        pt.bg = c('#39568CFF', 'green4', '#DCE319FF'),
        col = c('#39568CFF', 'green4', '#DCE319FF'), lwd = 1,
        bty = 'n', cex = 0.8)
+mtext('B', side = 2, at = 2.3, line = 2.5, las = 2)
 
 ##dev.off()
 
