@@ -1,5 +1,5 @@
 ---
-title: 'Data analysis for: Relative High Fitness and Genome-wide Diversity May Facilitate Active Foragers Diversification'
+title: "Data analysis for: Relative High Fitness and Genome-wide Diversity May Facilitate Plastic and Active Foragers' Diversification"
 author: '[Dylan Padilla](https://dylanpadilla.netlify.app/), Martha Munoz, David Skelly <br> Yale Institute for Biospheric Studies & Yale School of the Environment, New Haven, CT 06511'
 format:
   html:
@@ -45,6 +45,7 @@ library(png)
 library(phytools)
 library(raster)
 library(scales)
+library(shape)
 library(TreeSim)
 library(vioplot)
 library(viridis)
@@ -328,109 +329,6 @@ box()
 
 ##dev.off()
 
-
-## plotting arc phylogeny for visualization
-
-##png('./imgs/figure2.png', width = 7, height = 7, units = 'in',
-##    res = 360)
-##pdf('./imgs/figuer1.pdf')
-
-layout(matrix(c(1, 1, 1, 1, 1, 1,
-                1, 1, 1, 1, 1, 1,
-                1, 1, 1, 1, 1, 1,
-                1, 1, 1, 1, 1, 1,
-                1, 1, 8, 8, 1, 1,
-                1, 1, 8, 8, 1, 1,
-                1, 1, 8, 8, 1, 1,
-                2, 2, 3, 3, 4, 4,
-                2, 2, 3, 3, 4, 4,
-                5, 5, 6, 6, 7, 7,
-                5, 5, 6, 6, 7, 7), nrow = 11, ncol = 6, byrow = TRUE))
-
-cols <- setNames(c('#39568CFF', 'green4', '#DCE319FF'),
-                 levels(as.factor(map.spp)))
-
-arc_height <- 0.5
-h <- max(nodeHeights(pruned.tree))
-plotSimmap(lizard.maps.sym[[1]], colors = cols,
-           type = "arc", lwd = 1, ftype = "off",
-           arc_height = 0.5, ylim = c(-0.1*h, 1.1*(1+arc_height)*h),
-           mar = c(5, 4, 2, 3.2))
-
-labs <- seq(0, h, by = 35)
-draw.arc(0, 0, radius = h-labs[2:length(labs)]+0.5*h,
-         angle1 = , angle2 = pi, col = make.transparent("blue",0.2),
-         lty = "dotted")
-
-axis(1, pos = -3.5, at = h-seq(0, h, by = 35)+0.5*h,
-     labels = seq(0, h, by = 35), cex.axis = 0.5, padj = -2.5)
-axis(1, pos = -3.5, at = -h+seq(0, h, by = 35)-0.5*h,
-     labels = seq(0, h, by = 35), cex.axis = 0.5, padj = -2.5)
-
-legend('topleft', levels(as.factor(map.spp)), bty = "n",
-       fill = c('#39568CFF', 'green4', '#DCE319FF'))
-
-
-## overlaying raster images
-
-gek.img <-readPNG('imgs/gecko.png', native = TRUE)
-rasterImage(gek.img, 445, 110, 475, 85)
-sci.img <-readPNG('imgs/skink.png', native = TRUE)
-rasterImage(sci.img, 325, 360, 365, 290)
-tegu.img <-readPNG('imgs/tegu.png', native = TRUE)
-rasterImage(tegu.img, 205, 375, 275, 450)
-var.img <-readPNG('imgs/komodo.png', native = TRUE)
-rasterImage(var.img, 10, 450, 130, 495)
-igu.img <- readPNG('imgs/clamy.png', native = TRUE)
-rasterImage(igu.img, -170, 470, -120, 435)
-anole.img <- readPNG('imgs/anole.png', native = TRUE)
-rasterImage(anole.img, -350, 360, -310, 320)
-boa.img <- readPNG('imgs/boa.png', native = TRUE)
-rasterImage(boa.img, -430, 220, -350, 320)
-col.img <- readPNG('imgs/colubrid.png', native = TRUE)
-rasterImage(col.img, -490, 90, -430, 180)
-
-
-mtext('A', at = -550, side = 3, line = 0.5)
-
-## plotting state transitions
-
-par(mar = c(4, 7, 1, 3), cex = 0.5, mgp = c(2.8, 1, 0),
-    las = 1, col.lab = 'white')
-
-for.density <- density(lizard.maps.sym)
-plot(for.density, ylim = c(0, 0.3),
-     transition = for.density$trans[1],
-     colors = '#39568CFF', xlab = 'Number of transitions',
-     ylab = 'Relative frequency', las = 1, axes = FALSE)
-plot(for.density, ylim = c(0, 0.2),
-     transition = for.density$trans[2],
-     colors = '#39568CFF', xlab = '', las = 1)
-plot(for.density, ylim = c(0, 0.2),
-     transition = for.density$trans[4],
-     colors = 'green4', xlab = '', las = 1) 
-plot(for.density, ylim = c(0, 0.2),
-     transition = for.density$trans[6],
-     colors = '#DCE319FF', xlab = '', las = 1) 
-plot(for.density, ylim = c(0, 0.2),
-     transition = for.density$trans[5],
-     colors = '#DCE319FF', xlab = '', las = 1) 
-plot(for.density, ylim = c(0, 0.2),
-     transition = for.density$trans[3],
-     colors = 'green4', xlab = '', las = 1) 
-
-
-## Modifying axes labels
-
-## plotting state transitions
-
-mtext('Relative frequency', at = -380, line = -4, las = 2)
-mtext('B', at = -380, line = 17, las = 1)
-mtext('Number of transitions', at = -130, line = -11.5, las = 1)
-
-##dev.off()
-
-
 ```
 
 ```{r, eval = FALSE}
@@ -665,8 +563,7 @@ legend('topright', legend = c(expression(mu[1]),
 net.div <- mcmc.fit.full[ , grep('lambda', colnames(mcmc.fit.full))]-
     mcmc.fit.full[ , grep('mu', colnames(mcmc.fit.full))]
 
-##par(mar = c(5, 7, 2.5, 3.1), mgp = c(2.5, 1, 0), col.lab = 'black')
-par(mar = c(7, 4, 1, 0.5), mgp = c(2.5, 1, 0), col.lab = 'black')
+par(mar = c(7, 4, 1, 0.5), mgp = c(2.5, 1, 0))
 plot(NA, ylim = c(0, 70), xlim = c(0, 0.30),
      axes = FALSE, ylab = '', xlab = '')
 grid()
@@ -681,7 +578,129 @@ legend('topright', legend = c(expression(lambda-mu[1]),
                               expression(lambda-mu[3])),
        fill = colors, bty = 'n')
 
-##mtext('C', at = -0.2, side = 3, line = 1.1)
+
+## plotting arc phylogeny for visualization
+
+##png('./imgs/figure2.png', width = 7, height = 7, units = 'in',
+##    res = 360)
+##pdf('./imgs/figuer1.pdf')
+
+
+layout(matrix(c(1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1,
+                2, 2, 3, 3, 6, 6,
+                2, 2, 3, 3, 6, 6,
+                4, 4, 5, 5, 6, 6,
+                4, 4, 5, 5, 6, 6), nrow = 10,
+              ncol = 6, byrow = TRUE))
+
+
+cols <- setNames(c('#39568CFF', 'green4', '#DCE319FF'),
+                 levels(as.factor(map.spp)))
+
+arc_height <- 0.5
+h <- max(nodeHeights(pruned.tree))
+plotSimmap(lizard.maps.sym[[1]], colors = cols,
+           type = "arc", lwd = 1, ftype = "off",
+           arc_height = 0.5, ylim = c(-0.1*h, 1.1*(1+arc_height)*h),
+           mar = c(5, 4, 2, 3.2))
+
+labs <- seq(0, h, by = 35)
+draw.arc(0, 0, radius = h-labs[2:length(labs)]+0.5*h,
+         angle1 = , angle2 = pi, col = make.transparent("blue",0.2),
+         lty = "dotted")
+
+axis(1, pos = -3.5, at = h-seq(0, h, by = 35)+0.5*h,
+     labels = seq(0, h, by = 35), cex.axis = 0.5, padj = -2.5)
+axis(1, pos = -3.5, at = -h+seq(0, h, by = 35)-0.5*h,
+     labels = seq(0, h, by = 35), cex.axis = 0.5, padj = -2.5)
+Arrows(290, 55, 302, 43, col = 'red', arr.length = 0.1)
+text(285, 65, 'G', col = 'red', font = 2)
+Arrows(-60, 300, -52, 290, col = 'red', arr.length = 0.1)
+text(-65, 310, 'I', col = 'red', font = 2, family = 'Times New Roman')
+
+
+legend('topleft', levels(as.factor(map.spp)), bty = "n",
+       fill = c('#39568CFF', 'green4', '#DCE319FF'))
+
+
+## overlaying raster images
+
+gek.img <-readPNG('imgs/gecko.png', native = TRUE)
+rasterImage(gek.img, 445, 110, 475, 85)
+sci.img <-readPNG('imgs/skink.png', native = TRUE)
+rasterImage(sci.img, 325, 360, 365, 290)
+tegu.img <-readPNG('imgs/tegu.png', native = TRUE)
+rasterImage(tegu.img, 205, 375, 275, 450)
+var.img <-readPNG('imgs/komodo.png', native = TRUE)
+rasterImage(var.img, 10, 450, 130, 495)
+igu.img <- readPNG('imgs/clamy.png', native = TRUE)
+rasterImage(igu.img, -170, 470, -120, 435)
+anole.img <- readPNG('imgs/anole.png', native = TRUE)
+rasterImage(anole.img, -350, 360, -310, 320)
+boa.img <- readPNG('imgs/boa.png', native = TRUE)
+rasterImage(boa.img, -430, 220, -350, 320)
+col.img <- readPNG('imgs/colubrid.png', native = TRUE)
+rasterImage(col.img, -490, 90, -430, 180)
+
+
+mtext('A', at = -550, side = 3, line = 0.5)
+
+## plotting state transitions
+
+par(mar = c(4, 7, 1, 3), cex = 0.5, mgp = c(2.8, 1, 0),
+    las = 1, col.lab = 'white')
+
+for.density <- density(lizard.maps.sym)
+plot(for.density, ylim = c(0, 0.3),
+     transition = for.density$trans[1],
+     colors = '#39568CFF', xlab = 'Number of transitions',
+     ylab = 'Relative frequency', las = 1, axes = FALSE)
+plot(for.density, ylim = c(0, 0.2),
+     transition = for.density$trans[2],
+     colors = '#39568CFF', xlab = '', las = 1)
+##plot(for.density, ylim = c(0, 0.2),
+##     transition = for.density$trans[4],
+##     colors = 'green4', xlab = '', las = 1) 
+plot(for.density, ylim = c(0, 0.2),
+     transition = for.density$trans[6],
+     colors = '#DCE319FF', xlab = '', las = 1) 
+plot(for.density, ylim = c(0, 0.2),
+     transition = for.density$trans[5],
+     colors = '#DCE319FF', xlab = '', las = 1) 
+#plot(for.density, ylim = c(0, 0.2),
+#     transition = for.density$trans[3],
+#     colors = 'green4', xlab = '', las = 1) 
+
+
+## Modifying axes labels
+
+## plotting state transitions
+
+mtext('Relative frequency', at = -203, line = -4, las = 2)
+mtext('B', at = -203, line = 17, las = 1)
+mtext('Number of transitions', at = -45, line = -12.7, las = 1)
+
+par(mar = c(5, 3.9, 1, 0.5), col.lab = 'black', cex.lab = 1.4)
+plot(NA, ylim = c(0, 70), xlim = c(0, 0.30),
+     axes = FALSE, ylab = '', xlab = '')
+grid()
+par(new = TRUE)
+profiles.plot(net.div,
+              xlab = 'Net diversification', ylab = 'Probability density',
+              las = 1, legend.pos = NULL,
+              col.line = setNames(colors, colnames(net.div)),
+              lty = 1)
+legend('topleft', legend = c(expression(lambda[1]-mu[1]),
+                              expression(lambda[2]-mu[2]),
+                              expression(lambda[3]-mu[3])),
+       fill = colors, bty = 'n', cex = 1.4)
+
+mtext('C', at = -0.36, side = 3, line = 2.1)
 
 ##dev.off()
 
@@ -1943,6 +1962,11 @@ anova(gs.lmodel1)
 
 tapply(pruned.geno.size.data$genome.size,
        list(pruned.geno.size.data$Foraging.mode), mean)
+
+## computing genome size standard deviation among foraging behavior categories
+
+tapply(pruned.geno.size.data$genome.size,
+       list(pruned.geno.size.data$Foraging.mode), sd)
 
 ## plotting raw data
 
