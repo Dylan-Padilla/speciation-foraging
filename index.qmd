@@ -209,14 +209,14 @@ save(lizard.maps.sym, file = "stochastic.map.sym.RData")
 
 ```
 
-```{r, include = FALSE}
+```{r, include = FALSE, eval = FALSE}
 
 load('stochastic.map.sym.RData')
 
 ```
 
 
-```{r}
+```{r, eval = FALSE}
 
 ## convert to tree with unbranching nodes
 
@@ -337,7 +337,11 @@ box()
 
 ```
 
-```{r, eval = FALSE}
+![](imgs/figure4.png)
+
+
+
+```{r}
 
 ## setting up data for MuSEE model
 
@@ -501,7 +505,7 @@ load('mcmc.fit.full-10e5(2).RData')
 
 ```
 
-```{r}
+```{r, eval = FALSE}
 
 
 ## likelihood profile showing how the
@@ -714,6 +718,13 @@ mtext('C', at = -0.36, side = 3, line = 2.1)
 
 ## setting up the data for GLS models. We are using
 ## the merg.data table because it contains data on species ranges
+
+```
+
+![](imgs/figure2.png)
+
+
+```{r}
 
 merg.data <- as.data.frame(merg.data)
 merg.data$Species <- gsub(' ', '_', as.character(merg.data$Species))
