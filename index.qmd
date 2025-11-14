@@ -44,11 +44,17 @@ library(plotrix)
 library(png)
 library(phytools)
 library(raster)
+library(rsconnect)
 library(scales)
 library(shape)
 library(TreeSim)
 library(vioplot)
 library(viridis)
+
+
+## Create the manifest.json file for posit connect
+
+rsconnect::writeManifest()
 
 
 ## Session info and R version
