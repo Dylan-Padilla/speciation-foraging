@@ -4737,6 +4737,24 @@
     "index_files/figure-html/unnamed-chunk-10-6.png": {
       "checksum": "1ffdd5c7ed7402ee7a284f2d306e8b97"
     },
+    "index_files/figure-html/unnamed-chunk-11-1.png": {
+      "checksum": "27cc1a6b43e641884758e336b1c79d9e"
+    },
+    "index_files/figure-html/unnamed-chunk-11-2.png": {
+      "checksum": "ad43a7b1abfc3cf5b70ad0bb853841bf"
+    },
+    "index_files/figure-html/unnamed-chunk-11-3.png": {
+      "checksum": "2cd593c5e1004a0532f29db824b68605"
+    },
+    "index_files/figure-html/unnamed-chunk-11-4.png": {
+      "checksum": "121c2347785e04ffa2051476d831012c"
+    },
+    "index_files/figure-html/unnamed-chunk-11-5.png": {
+      "checksum": "8f5b943a5e44e2d9e46dd32014c59559"
+    },
+    "index_files/figure-html/unnamed-chunk-11-6.png": {
+      "checksum": "1ffdd5c7ed7402ee7a284f2d306e8b97"
+    },
     "index_files/figure-html/unnamed-chunk-12-1.png": {
       "checksum": "76e8449dd1d298f0d8a5c5bc2a34babd"
     },
@@ -4762,31 +4780,34 @@
       "checksum": "0ec621fcba0372c5057b348d6ba1699c"
     },
     "index_files/figure-html/unnamed-chunk-15-1.png": {
-      "checksum": "7a85317cb4141d199151ed655a1d4e7a"
+      "checksum": "83cd5b550ed8eeb5d0b255862de03209"
+    },
+    "index_files/figure-html/unnamed-chunk-15-2.png": {
+      "checksum": "0ec621fcba0372c5057b348d6ba1699c"
     },
     "index_files/figure-html/unnamed-chunk-16-1.png": {
-      "checksum": "f7ce900905f7fcc1229a8cb2a66b6a66"
+      "checksum": "7a85317cb4141d199151ed655a1d4e7a"
     },
     "index_files/figure-html/unnamed-chunk-17-1.png": {
-      "checksum": "76ee92aba2e9bb1fdc807d35ce024aa5"
+      "checksum": "f7ce900905f7fcc1229a8cb2a66b6a66"
     },
     "index_files/figure-html/unnamed-chunk-18-1.png": {
       "checksum": "76ee92aba2e9bb1fdc807d35ce024aa5"
     },
     "index_files/figure-html/unnamed-chunk-19-1.png": {
-      "checksum": "6fdf5bde223eb8e69bada66339bfb538"
+      "checksum": "76ee92aba2e9bb1fdc807d35ce024aa5"
     },
     "index_files/figure-html/unnamed-chunk-2-1.png": {
       "checksum": "2ab330419e24d168cb2bd2bb649d5c07"
     },
     "index_files/figure-html/unnamed-chunk-20-1.png": {
-      "checksum": "5b9752cce72957a08516ee37889b60b6"
+      "checksum": "6fdf5bde223eb8e69bada66339bfb538"
     },
     "index_files/figure-html/unnamed-chunk-21-1.png": {
       "checksum": "5b9752cce72957a08516ee37889b60b6"
     },
     "index_files/figure-html/unnamed-chunk-22-1.png": {
-      "checksum": "f4cd518b56d5fcc8124e878165a93d89"
+      "checksum": "5b9752cce72957a08516ee37889b60b6"
     },
     "index_files/figure-html/unnamed-chunk-23-1.png": {
       "checksum": "3f678f015bbe906ede65d3c6b9321a5c"
@@ -4807,19 +4828,19 @@
       "checksum": "c68ed3312e19109537c395ce1693aec3"
     },
     "index_files/figure-html/unnamed-chunk-25-1.png": {
-      "checksum": "c484c4770edbf404f432ca76eca543fa"
+      "checksum": "3e4feec9daaa9fe3206702f58a87a80f"
     },
     "index_files/figure-html/unnamed-chunk-26-1.png": {
-      "checksum": "f4cd518b56d5fcc8124e878165a93d89"
+      "checksum": "c484c4770edbf404f432ca76eca543fa"
     },
     "index_files/figure-html/unnamed-chunk-27-1.png": {
-      "checksum": "3f678f015bbe906ede65d3c6b9321a5c"
+      "checksum": "f4cd518b56d5fcc8124e878165a93d89"
     },
     "index_files/figure-html/unnamed-chunk-28-1.png": {
-      "checksum": "71ccd7a4859ab4130dfdff1c4ab6ca13"
+      "checksum": "3f678f015bbe906ede65d3c6b9321a5c"
     },
     "index_files/figure-html/unnamed-chunk-29-1.png": {
-      "checksum": "ea8f818bccc13ba6734e118239affd9a"
+      "checksum": "866c68c6d6cd6bc2587ee3fd71d9f26c"
     },
     "index_files/figure-html/unnamed-chunk-30-1.png": {
       "checksum": "ea8f818bccc13ba6734e118239affd9a"
@@ -4828,7 +4849,7 @@
       "checksum": "ea8f818bccc13ba6734e118239affd9a"
     },
     "index_files/figure-html/unnamed-chunk-32-1.png": {
-      "checksum": "bfb1d88e89beb210212e77720e7c39b3"
+      "checksum": "6144359d36ad436e5c9df53701fe9718"
     },
     "index_files/figure-html/unnamed-chunk-32-2.png": {
       "checksum": "5267497598f19756337a1b74c3e57d8f"
@@ -4852,16 +4873,16 @@
       "checksum": "3c3ee636b02880479e61071083b90750"
     },
     "index_files/figure-html/unnamed-chunk-33-1.png": {
-      "checksum": "3e4d8fa27d2f3cb3c5cc6ebf107de89d"
+      "checksum": "077db7aa7b5d0d2d724d462aa7be248f"
     },
     "index_files/figure-html/unnamed-chunk-34-1.png": {
       "checksum": "3e4d8fa27d2f3cb3c5cc6ebf107de89d"
     },
     "index_files/figure-html/unnamed-chunk-35-1.png": {
-      "checksum": "6c8c23f6a693e57963ba66bdb4fb9cb5"
+      "checksum": "1d1c8a647eb972ce17268475d27adceb"
     },
     "index_files/figure-html/unnamed-chunk-36-1.png": {
-      "checksum": "5a81838bc5476fcbf9c58ce78888e94a"
+      "checksum": "6c8c23f6a693e57963ba66bdb4fb9cb5"
     },
     "index_files/figure-html/unnamed-chunk-36-2.png": {
       "checksum": "5267497598f19756337a1b74c3e57d8f"
@@ -4909,6 +4930,30 @@
       "checksum": "3c3ee636b02880479e61071083b90750"
     },
     "index_files/figure-html/unnamed-chunk-38-1.png": {
+      "checksum": "5a81838bc5476fcbf9c58ce78888e94a"
+    },
+    "index_files/figure-html/unnamed-chunk-38-2.png": {
+      "checksum": "5267497598f19756337a1b74c3e57d8f"
+    },
+    "index_files/figure-html/unnamed-chunk-38-3.png": {
+      "checksum": "7f285e91dde7bfba0e10d549d1800841"
+    },
+    "index_files/figure-html/unnamed-chunk-38-4.png": {
+      "checksum": "7706532823f8849d14cc33a485d3699e"
+    },
+    "index_files/figure-html/unnamed-chunk-38-5.png": {
+      "checksum": "9ff8d7bec032b0617af38c5984733614"
+    },
+    "index_files/figure-html/unnamed-chunk-38-6.png": {
+      "checksum": "39e74c26f082fe281ab64c044a0a6fcd"
+    },
+    "index_files/figure-html/unnamed-chunk-38-7.png": {
+      "checksum": "ce1c4ac7e1f416fe868489d9effe35ce"
+    },
+    "index_files/figure-html/unnamed-chunk-38-8.png": {
+      "checksum": "3c3ee636b02880479e61071083b90750"
+    },
+    "index_files/figure-html/unnamed-chunk-39-1.png": {
       "checksum": "a60a5aa716d4a18a5d9a3b7f79181b10"
     },
     "index_files/figure-html/unnamed-chunk-5-1.png": {
@@ -4996,13 +5041,13 @@
       "checksum": "d828775275749701b48bd9d958814111"
     },
     "index.html": {
-      "checksum": "3cec10231db9d2e365cb379f8891edb9"
+      "checksum": "949cd2afb9f562418e2515e02460e1a9"
     },
     "index.qmd": {
-      "checksum": "eff3f4da00648a1d980b1288fb0b1ed1"
+      "checksum": "1c5afdc44c5a9fbb8538222c5d2e1e9c"
     },
     "index.rmarkdown": {
-      "checksum": "4a3eab7e34236e569eaa5b3f0c5cbc9e"
+      "checksum": "6431112f3136cb453d944d9f4ea66003"
     },
     "komodo.png": {
       "checksum": "898a32951330e5de90a3f5be95e77b7b"
@@ -5057,9 +5102,6 @@
     },
     "squamates-comparative-genomic-data.tsv": {
       "checksum": "981d24d2106427f4d730cb1c46347446"
-    },
-    "stochastic.map.sym.RData": {
-      "checksum": "e35c5e6ab55cd4e5bccc5037c0f492dc"
     },
     "tegu.png": {
       "checksum": "6d977a92902296b3cd30d126e6e914e4"
