@@ -211,7 +211,7 @@ save(lizard.maps.sym, file = "stochastic.map.sym.RData")
 
 ```{r, include = FALSE}
 
-load('../stochastic.map.sym.RData')
+load('stochastic.map.sym.RData')
 
 ```
 
@@ -1021,7 +1021,7 @@ chainOU <- set.burnin(chainOU, 0.3)
 
 ```{r, include = FALSE}
 
-load('../mcmc_modelOU-10e4.RData')
+load('mcmc_modelOU-10e4.RData')
 
 ```
 
@@ -2429,7 +2429,7 @@ plot1 + as.layer(plot2)
 
 ```{r}
 
-gc.data <- read.csv("../squamate-gc-values.csv")
+gc.data <- read.csv("squamate-gc-values.csv")
 str(gc.data)
 
 gc.mean.data <- aggregate(gc.data$C.value,

@@ -1,0 +1,421 @@
+Class,Order,Family,Species,Common Name,C value,Ch. Num,Method,Cell Type,Std Sp.,Refs
+Reptilia,Crocodylia,Alligatoridae,Alligator mississippiensis,American alligator,2.49,32,FD,RBC,GD,324
+Reptilia,Crocodylia,Alligatoridae,Alligator mississippiensis,American alligator,2.66,,FCM,RBC,"HS,ÊOM",598
+Reptilia,Crocodylia,Alligatoridae,Caiman crocodilus,Spectacled caiman,2.68,42,FD,RBC,PS,368
+Reptilia,Crocodylia,Alligatoridae,Caiman crocodilus,Spectacled caiman,2.82,,FD,RBC,HS,14
+Reptilia,Crocodylia,Alligatoridae,Caiman crocodilus,Spectacled caiman,3.01,,SCF,RBC,HS,106
+Reptilia,Crocodylia,Alligatoridae,Caiman latirostris,Broad-snouted caiman,3.91,42,FD,RBC,PS,370
+Reptilia,Crocodylia,Crocodylidae,Crocodylus niloticus,Nile crocodile,1.35,,FK,IC,HS,805
+Reptilia,Crocodylia,Crocodylidae,Crocodylus niloticus,Nile crocodile,2.84,,SCF,RBC,HS,106
+Reptilia,Crocodylia,Crocodylidae,Crocodylus niloticus,Nile crocodile,3.95,32,FD,RBC,V,75
+Reptilia,Crocodylia,Crocodylidae,Crocodylus siamensis,Siamese crocodile,2.84,34,SCF,RBC,HS,106
+Reptilia,Rhynchocephalia,Sphenodontidae,Sphenodon punctatus,Tuatara,5,36,FD,RBC,PS,370
+Reptilia,Squamata,Agamidae,Acanthosaura crucigera,Mountain dragon,1.45,,FD,RBC,V,75
+Reptilia,Squamata,Agamidae,Agama agama,Agama lizard,1.37,,SCF,RBC,HS,106
+Reptilia,Squamata,Agamidae,Agama agama,Agama lizard,1.61,,SCF,RBC,HS,106
+Reptilia,Squamata,Agamidae,Agama agama,Agama lizard,2.11,48,FD,RBC,PS,368
+Reptilia,Squamata,Agamidae,Agama atra,Southern rock agama,1.47,44,SCF,RBC,HS,106
+Reptilia,Squamata,Agamidae,Agama impalearis,Bibron's agama,1.51,,SCF,RBC,HS,106
+Reptilia,Squamata,Agamidae,Amphibolurus longirostris,Long-nosed water dragon,2,,FCM,RBC,BF,288
+Reptilia,Squamata,Agamidae,Bronchocela cristatella,Borneo bloodsucker,2.38,48,SCF,RBC,HS,106
+Reptilia,Squamata,Agamidae,Calotes emma,Forest crested lizard,2.1,,SCF,RBC,HS,106
+Reptilia,Squamata,Agamidae,Calotes ensicauda,Unknown,2.4,,FD,RBC,V,75
+Reptilia,Squamata,Agamidae,Calotes versicolor,Crested tree dragon,1.37,,SCF,RBC,HS,106
+Reptilia,Squamata,Agamidae,Calotes versicolor,Crested tree dragon,1.61,,SCF,RBC,HS,106
+Reptilia,Squamata,Agamidae,Calotes versicolor,Crested tree dragon,2.52,34,FD,RBC,PS,368
+Reptilia,Squamata,Agamidae,Laudakia bochariensis,Unknown,1.97,36,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Agamidae,Laudakia caucasia,Rock agama,1.87,34,FCM,RBC,BF,288
+Reptilia,Squamata,Agamidae,Laudakia himalayana,Rock agama,1.91,36,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Agamidae,Laudakia stellio,Hardun,2.14,36,SCF,RBC,HS,106
+Reptilia,Squamata,Agamidae,Leiolepis belliana,Butterfly agama,1.4,,SCF,RBC,HS,106
+Reptilia,Squamata,Agamidae,Leiolepis belliana,Butterfly agama,1.9,36,FD,RBC,V,75
+Reptilia,Squamata,Agamidae,Leiolepis reevesii,Reeve's butterfly agama,2.2,,FD,RBC,V,75
+Reptilia,Squamata,Agamidae,Phrynocephalus helioscopus,Toad-headed agama,2.08,44,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Agamidae,Phrynocephalus versicolor,Toad-headed agama,1.95,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Agamidae,Physignathus cocincinus,Asian water dragon,1.86,36,SCF,RBC,HS,106
+Reptilia,Squamata,Agamidae,Pogona vitticeps,Bearded dragon,1.81,32,FCM,RBC,BF,288
+Reptilia,Squamata,Agamidae,Trapelus sanguinolentus,Steppe agama,1.72,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Agamidae,Uromastyx acanthinura,Black spiny-tailed lizard,2.19,,FD,RBC,PS,368
+Reptilia,Squamata,Agamidae,Uromastyx hardwickii,Spiny-tailed lizard,2.45,36,SCF,RBC,HS,106
+Reptilia,Squamata,Amphisbaenidae,Amphisbaena mertensii,Worm lizard,1.32,40,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Anguidae,Anguis fragilis,Slow worm,2,,FCM,RBC,BF,288
+Reptilia,Squamata,Anguidae,Anguis fragilis,Slow worm,2.11,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Anguidae,Anguis fragilis,Slow worm,2.59,,SCF,RBC,HS,106
+Reptilia,Squamata,Anguidae,Anguis fragilis,Slow worm,3.8,44,FD,RBC,PS,370
+Reptilia,Squamata,Anguidae,Diploglossus fasciatus,Galliwasp,1.6,36,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Anguidae,Elgaria multicarinata,Southern alligator lizard,1.75,,SCF,RBC,HS,106
+Reptilia,Squamata,Anguidae,Elgaria multicarinata,Southern alligator lizard,2.21,48,FD,RBC,HS,14
+Reptilia,Squamata,Anguidae,Ophiodes striatus,Unknown,1.55,36,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Anguidae,Ophisaurus koellikeri,North African glass lizard,1.54,,FD,RBC,PS,370
+Reptilia,Squamata,Anguidae,Pseudopus apodus,Armored glass lizard,1.9,,FCM,RBC,BF,288
+Reptilia,Squamata,Anguidae,Pseudopus apodus,Armored glass lizard,2.38,,SCF,RBC,HS,106
+Reptilia,Squamata,Anguidae,Pseudopus apodus,Armored glass lizard,2.49,44,FD,RBC,PS,370
+Reptilia,Squamata,Bipedidae,Bipes biporus,Worm lizard,1.92,42,FD,RBC,XL,292
+Reptilia,Squamata,Bipedidae,Bipes canaliculatus,Worm lizard,2.1,44,FD,RBC,XL,292
+Reptilia,Squamata,Boidae,Boa constrictor,Boa constrictor,1.75,,SCF,RBC,HS,106
+Reptilia,Squamata,Boidae,Boa constrictor,Boa constrictor,2.04,,FD,RBC,HS,14
+Reptilia,Squamata,Boidae,Boa constrictor,Boa constrictor,3.15,36,FD,RBC,PS,368
+Reptilia,Squamata,Boidae,Corallus cookii,Cook's tree boa,1.79,,SCF,RBC,HS,106
+Reptilia,Squamata,Boidae,Epicrates cenchria,Rainbow boa,2.21,,SCF,RBC,HS,106
+Reptilia,Squamata,Boidae,Epicrates cenchria,Rainbow boa,3.11,36,FD,RBC,PS,368
+Reptilia,Squamata,Boidae,Eryx jaculus,Javelin sand boa,1.73,34,FCM,RBC,BF,288
+Reptilia,Squamata,Boidae,Eunectes murinus,Anaconda,1.72,36,SCF,RBC,HS,106
+Reptilia,Squamata,Boidae,Gongylophis conicus,Rough-scaled sand boa,1.4,,SCF,RBC,HS,106
+Reptilia,Squamata,Boidae,Python curtus,Blood python,1.83,,FCM,RBC,"HS,ÊOM",598
+Reptilia,Squamata,Boidae,Python reticulatus,Reticulated python,1.44,,SCF,RBC,HS,106
+Reptilia,Squamata,Boidae,Python reticulatus,Reticulated python,1.75,36,FD,RBC,PS,368
+Reptilia,Squamata,Chamaeleonidae,Chamaeleo ceylanicus,Chameleon,2.52,,SCF,RBC,HS,106
+Reptilia,Squamata,Chamaeleonidae,Chamaeleo dilepis,Flapneck chameleon,2.21,24,SCF,RBC,HS,106
+Reptilia,Squamata,Chamaeleonidae,Chamaeleo hoehnelli,Chameleon,2.24,24,SCF,RBC,HS,106
+Reptilia,Squamata,Chamaeleonidae,Chamaeleo jacksonii,Jackson's chameleon,1.99,24,FD,RBC,PS,368
+Reptilia,Squamata,Chamaeleonidae,Chamaeleo jacksonii,Jackson's chameleon,2.03,,SCF,RBC,HS,106
+Reptilia,Squamata,Chamaeleonidae,Chamaeleo sp.,Chameleon,3.79,0-0,FD,RBC,XL,604
+Reptilia,Squamata,Colubridae,Ahaetulla nasuta,Long-nosed whip snake,2.07,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Boiga blandingii,Blanding's snake,2.21,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Chironius fuscus,N/A,2.24,,FCM,RBC,BF,288
+Reptilia,Squamata,Colubridae,Chrysopelea ornata,Golden flying snake,2,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Coluber constrictor,Eastern racer,1.43,36,FD,RBC,GD,324
+Reptilia,Squamata,Colubridae,Coluber najadum,Dahl's whip snake,1.77,,FCM,RBC,RP,288
+Reptilia,Squamata,Colubridae,Coluber nummifer,Desert whip snake,1.73,,FCM,RBC,RP,288
+Reptilia,Squamata,Colubridae,Coluber ravergieri,Ravergier's whip snake,1.71,,FCM,RBC,RP,288
+Reptilia,Squamata,Colubridae,Coluber schmidti,Whip snake,1.65,,FCM,RBC,RP,288
+Reptilia,Squamata,Colubridae,Coluber sp.1,Whip snake,1.51,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Coluber sp.2,Whip snake,1.89,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Coluber viridiflavus,Western whip snake,2.2,36,FD,RBC,PS,370
+Reptilia,Squamata,Colubridae,Coluber viridiflavus,Western whip snake,3.26,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Coronella austriaca,Smooth snake,1.89,36,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Coronella girondica,Southern smooth snake,2.57,,FD,RBC,PS,368
+Reptilia,Squamata,Colubridae,Coronella girondica,Southern smooth snake,2.59,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Dasypeltis fasciata,Central African egg-eating snake,1.61,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Dasypeltis scabra,Common egg-eating snake,1.47,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Drymarchon couperi,Eastern indigo snake,2.17,36,FD,RBC,HS,14
+Reptilia,Squamata,Colubridae,Eirenis collaris,Collared dwarf racer,1.8,,FCM,RBC,BF,288
+Reptilia,Squamata,Colubridae,Eirenis punctatolineatus,Dotted dwarf racer,1.86,,FCM,RBC,BF,288
+Reptilia,Squamata,Colubridae,Elaphe longissima,Aesculapian snake,1.82,36,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Elaphe obsoleta,Eastern rat snake,2.14,36,FD,RBC,GD,324
+Reptilia,Squamata,Colubridae,Elaphe obsoleta,Eastern rat snake,2.21,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Elaphe quatuorlineata,Bulgarian ratsnake,1.83,,FCM,RBC,RP,288
+Reptilia,Squamata,Colubridae,Elaphe scalaris,Ladder snake,2.03,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Helicops bicolor,Snake,1.82,36,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Homalopsis buccata,Puff-faced water snake,1.82,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Lampropeltis getula,Common kingsnake,2.7,,SCF,RBC,HS,106
+ptilia,Squamata,Colubridae,Lamprophis fuliginosus,African house snake,1.51,34,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Leptophis mexicanus,Green-headed snake,2.66,,FD,RBC,PS,368
+Reptilia,Squamata,Colubridae,Liophis miliaris,Swampsnake,2.01,28,FCM,RBC,BF,288
+Reptilia,Squamata,Colubridae,Natrix maura,Viperine snake,2.35,34,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Natrix natrix,European grass snake,1.99,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Colubridae,Natrix natrix,European grass snake,2.55,,FD,RBC,NS,334
+Reptilia,Squamata,Colubridae,Natrix natrix,European grass snake,2.57,34,FD,RBC,PS,368
+Reptilia,Squamata,Colubridae,Natrix natrix,European grass snake,2.84,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Natrix natrix,European grass snake,3.53,,NS,RBC,CP,152
+Reptilia,Squamata,Colubridae,Natrix natrix,European grass snake,3.8,,NS,NS,GD,534
+Reptilia,Squamata,Colubridae,Natrix tessellata,Dice snake,1.75,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Colubridae,Natrix tessellata,Dice snake,1.91,34,FCM,RBC,RP,288
+Reptilia,Squamata,Colubridae,Natrix tessellata,Dice snake,2.35,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Nerodia erythrogaster,Plainbelly water snake,1.82,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Nerodia rhombifera,Broad-banded water snake,1.89,36,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Nerodia rhombifera,Broad-banded water snake,2.03,,FCM,RBC,GD,392
+Reptilia,Squamata,Colubridae,Nerodia sipedon,Northern water snake,1.9,,FCM,RBC,XL,288
+Reptilia,Squamata,Colubridae,Nerodia sipedon,Northern water snake,2,,FCM,RBC,"GD,ÊHS,ÊV",504
+Reptilia,Squamata,Colubridae,Nerodia sipedon,Northern water snake,2.49,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Nerodia sipedon,Unknown,2.51,,FD,RBC,GD,324
+Reptilia,Squamata,Colubridae,Opheodrys aestivus,Rough green snake,1.61,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Oxyrhopus petola,Red-banded snake,1.54,46,FCM,RBC,BF,288
+Reptilia,Squamata,Colubridae,Ptyas korros,Indo-Chinese ratsnake,2.98,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Ptyas mucosus,Common ratsnake,2.49,34,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Regina septemvittata,Queen snake,2.38,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Rhabdophis subminiatus,Red-necked keelback,1.89,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Sinonatrix annularis,Snake,2.28,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Tantilla melanocephala,Black-headed snake,2.25,,FCM,RBC,BF,288
+Reptilia,Squamata,Colubridae,Telescopus fallax,Cat snake,1.87,36,FCM,RBC,RP,288
+Reptilia,Squamata,Colubridae,Telescopus fallax,Cat snake,2.14,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Thamnophis elegans,Western terrestrial garter snake,2.73,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Thamnophis marcianus,Checkered garter snake,2.66,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Thamnophis sauritus,Eastern ribbon snake,2.14,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Thamnophis sirtalis,Common garter snake,1.91,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Colubridae,Thamnophis sirtalis,Common garter snake,3.01,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Tropidonotus cyclopium,Snake,2.45,,SCF,RBC,HS,106
+Reptilia,Squamata,Colubridae,Waglerophis merremi,False viper,2.46,30,FD,RBC,HS,14
+Reptilia,Squamata,Colubridae,Xenochrophis piscator,Checkered keelback,1.68,42,SCF,RBC,HS,106
+Reptilia,Squamata,Cordylidae,Cordylus cataphractus,Armadillo lizard,3.93,46,FD,RBC,PS,370
+Reptilia,Squamata,Cordylidae,Cordylus giganteus,Giant girdled lizard,2.28,,SCF,RBC,HS,106
+Reptilia,Squamata,Cordylidae,Cordylus giganteus,Giant girdled lizard,3.9,,FD,RBC,NS,334
+Reptilia,Squamata,Cordylidae,Cordylus giganteus,Giant girdled lizard,3.91,44,FD,RBC,PS,370
+Reptilia,Squamata,Cordylidae,Cordylus polyzonus,Karoo girdled lizard,3.86,34,FD,RBC,PS,370
+Reptilia,Squamata,Cordylidae,Cordylus rhodesianus,Zimbabwe girdled lizard,3.62,34,FD,RBC,PS,370
+Reptilia,Squamata,Cordylidae,Cordylus tropidosternum,Girdled lizard,3.08,,SCF,RBC,HS,106
+Reptilia,Squamata,Cordylidae,Cordylus tropidosternum,Girdled lizard,3.93,34,FD,RBC,PS,370
+Reptilia,Squamata,Cordylidae,Cordylus vittifer,Girdled lizard,2.28,,SCF,RBC,HS,106
+Reptilia,Squamata,Cordylidae,Cordylus vittifer,Girdled lizard,3.45,34,FD,RBC,PS,368
+Reptilia,Squamata,Cordylidae,Cordylus warreni depressus,Spotted girdle-tailed lizard,3.6,,FD,RBC,NS,334
+Reptilia,Squamata,Cordylidae,Cordylus warreni depressus,Spotted girdle-tailed lizard,3.61,34,FD,RBC,PS,370
+Reptilia,Squamata,Cordylidae,Gerrhosaurus flavigularis,Yellow-throated plated lizard,1.96,34,SCF,RBC,HS,106
+Reptilia,Squamata,Cordylidae,Gerrhosaurus major,Sudan plated lizard,3.36,,SCF,RBC,HS,106
+Reptilia,Squamata,Cordylidae,Gerrhosaurus major,Sudan plated lizard,3.36,34,FD,RBC,PS,370
+Reptilia,Squamata,Cordylidae,Gerrhosaurus validus,South African giant plated lizard,3.11,34,FD,RBC,PS,368
+Reptilia,Squamata,Cordylidae,Platysaurus guttatus,Ornamental flat lizard,1.93,,SCF,RBC,HS,106
+Reptilia,Squamata,Cordylidae,Platysaurus guttatus,Ornamental flat lizard,3.22,34,FD,RBC,PS,368
+Reptilia,Squamata,Cordylidae,Platysaurus intermedius,Common flat lizard,2.24,,SCF,RBC,HS,106
+Reptilia,Squamata,Cordylidae,Platysaurus intermedius,Common flat lizard,3.11,34,FD,RBC,PS,368
+Reptilia,Squamata,Cordylidae,Platysaurus minor,Waterberg flat lizard,2.35,,SCF,RBC,HS,106
+Reptilia,Squamata,Cordylidae,Pseudocordylus melanotus,Drakensberg crag lizard,2.45,,SCF,RBC,HS,106
+Reptilia,Squamata,Cordylidae,Pseudocordylus microlepidotus,Cape crag lizard,3.14,34,FD,RBC,PS,370
+Reptilia,Squamata,Cordylidae,Tetradactylus seps,Long-tailed seps,2.84,34,FD,RBC,PS,370
+Reptilia,Squamata,Corytophanidae,Basiliscus basiliscus,Brown basilisk,2.04,,FD,RBC,PS,368
+Reptilia,Squamata,Corytophanidae,Basiliscus basiliscus,Brown basilisk,2.07,,SCF,RBC,HS,106
+Reptilia,Squamata,Crotaphytidae,Crotaphytus collaris,Eastern collared lizard,2.38,36,SCF,RBC,HS,106
+Reptilia,Squamata,Elapidae,Bungarus fasciatus,Banded krait,2.38,,SCF,RBC,HS,106
+Reptilia,Squamata,Elapidae,Furina ornata,Orange-naped snake,2,34,FCM,RBC,BF,288
+Reptilia,Squamata,Elapidae,Micrurus lemniscatus,South American coral snake,1.85,42,FCM,RBC,BF,288
+Reptilia,Squamata,Elapidae,Micrurus nigrocinctus,Black-banded coral snake,1.54,26,FD,RBC,PS,370
+Reptilia,Squamata,Elapidae,Naja haje,Egyptian cobra,2.59,38,SCF,RBC,HS,106
+Reptilia,Squamata,Elapidae,Naja nigricollis,Spitting cobra,2.66,38,SCF,RBC,HS,106
+Reptilia,Squamata,Elapidae,Simoselaps anomalus,Eastern brown snake,1.81,,FCM,RBC,BF,288
+Reptilia,Squamata,Elapidae,Simoselaps fasciolatus,Narrow-banded snake,1.85,,FCM,RBC,BF,288
+Reptilia,Squamata,Elapidae,Simoselaps incinctus,Burowing snake,1.85,,FCM,RBC,BF,288
+Reptilia,Squamata,Eublepharidae,Coleonyx brevis,Texas banded gecko,2.01,,FCM,RBC,XL,680
+Reptilia,Squamata,Eublepharidae,Coleonyx elegans,Banded gecko,1.56,,FCM,RBC,XL,680
+Reptilia,Squamata,Eublepharidae,Coleonyx mitratus,Banded gecko,1.76,,FCM,RBC,XL,680
+Reptilia,Squamata,Eublepharidae,Coleonyx variegatus,Western banded gecko,1.92,,FCM,RBC,XL,680
+Reptilia,Squamata,Eublepharidae,Eublepharis angramainyu,Eyelid gecko,2,,FCM,RBC,XL,680
+Reptilia,Squamata,Eublepharidae,Eublepharis cf. fuscus,Eyelid gecko,1.88,,FCM,RBC,XL,680
+Reptilia,Squamata,Eublepharidae,Eublepharis macularius,Leopard gecko,1.86,,FCM,RBC,XL,680
+Reptilia,Squamata,Eublepharidae,Eublepharis macularius,Leopard gecko,2.46,38,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Eublepharidae,Eublepharis macularius,Leopard gecko,2.7,,SCF,RBC,HS,106
+Reptilia,Squamata,Eublepharidae,Goniurosaurus araneus,Eyelid gecko,1.87,,FCM,RBC,XL,680
+Reptilia,Squamata,Eublepharidae,Goniurosaurus lichtenfelderi,Eyelid gecko,1.85,,FCM,RBC,XL,680
+Reptilia,Squamata,Eublepharidae,Goniurosaurus luii,Eyelid gecko,1.87,,FCM,RBC,XL,680
+Reptilia,Squamata,Eublepharidae,Hemitheconyx caudicinctus,Eyelid gecko,1.81,,FCM,RBC,XL,680
+Reptilia,Squamata,Eublepharidae,Holodactylus africanus,Eyelid gecko,1.76,,FCM,RBC,XL,680
+Reptilia,Squamata,Gekkonidae,Cosymbotus platyurus,Asian flat-tailed gecko,2.63,46,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Geckonia chazaliae,Helmeted gecko,1.89,42,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Gekko gecko,Tokay gecko,2.84,38,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Gekko sinensis,Gecko,2.83,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Gekkonidae,Hemidactylus brookii,Brook's gecko,3.17,40,FD,RBC,PS,368
+Reptilia,Squamata,Gekkonidae,Hemidactylus brookii,Brook's gecko,3.36,,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Hemidactylus brookii angulatus,Brook's gecko,3.43,40,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Hemidactylus frenatus,House gecko,1.86,,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Hemidactylus frenatus,House gecko,3.02,46,FD,RBC,PS,368
+Reptilia,Squamata,Gekkonidae,Hemidactylus leightoni,Gecko,2.52,,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Hemidactylus leschenaultii,Bark gecko,2.28,,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Hemidactylus mabouia,House gecko,2.1,42,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Gekkonidae,Pachydactylus bibronii,Bibron's gecko,2.63,36,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Phelsuma cepediana,Blue-tailed day gecko,2.21,36,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Phelsuma ornata,Ornate day gecko,2.14,,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Platypholis walbergii,Wahlberg's gecko,2.17,36,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Ptychozoon lionotum,Gliding gecko,3.25,,FD,RBC,V,75
+Reptilia,Squamata,Gekkonidae,Ptyodactylus hasselquistii,Fan-footed gecko,1.89,,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Tarentola delalandii,Tenerife gecko,2.54,42,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Tarentola mauritanica,Wall gecko,2.53,42,FD,RBC,PS,368
+Reptilia,Squamata,Gekkonidae,Tarentola mauritanica,Wall gecko,2.77,,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Tarentola sp.,Gecko,2.49,,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Teratoscincus scincus,Frog-eyed gecko,2.59,34,SCF,RBC,HS,106
+Reptilia,Squamata,Gekkonidae,Thecadactylus rapicauda,Turnip-tailed gecko,2.36,44,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Hydrophiidae,Enhydrina schistosa,Beaked sea snake,2.75,32,FD,RBC,PS,370
+Reptilia,Squamata,Hydrophiidae,Laticauda sp.,Sea snake,3.69,,FD,RBC,PS,370
+Reptilia,Squamata,Hydrophiidae,Thalassophina viperina,Sea snake,2.4,32,FD,RBC,PS,370
+Reptilia,Squamata,Iguanidae,Cyclura cornuta,Horned ground iguana,1.8,,FCM,RBC,"HS,ÊOM",598
+Reptilia,Squamata,Iguanidae,Iguana iguana,Iguana,2.89,36,FD,RBC,PS,368
+Reptilia,Squamata,Iguanidae,Sauromalus obesus,Chuckwalla,2.66,36,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Acanthodactylus pardalis,Fringe-finger lizard,1.44,,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Eremias grammica,Reticulate racerunner,1.9,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Lacertidae,Eremias multiocellata,Multi-cellated racerunner,1.73,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Lacertidae,Ichnotropis capensis,Cape lizard,1.48,0-0,FD,RBC,XL,604
+Reptilia,Squamata,Lacertidae,Lacerta agilis,Sand lizard,1.6,38,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Lacertidae,Lacerta agilis,Sand lizard,2.1,,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Lacerta galloti,Canary Island lizard,1.23,,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Lacerta galloti,Canary Island lizard,2.33,40,FD,RBC,PS,368
+Reptilia,Squamata,Lacertidae,Lacerta viridis,Green lacerta lizard,1.56,,SCF,RBC,GD,196
+Reptilia,Squamata,Lacertidae,Lacerta viridis,Green lacerta lizard,1.66,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Lacertidae,Lacerta viridis,Green lacerta lizard,2.1,,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Lacerta viridis,Green lacerta lizard,2.55,38,FD,RBC,PS,370
+Reptilia,Squamata,Lacertidae,Lacerta vivipara,European common lizard,1.12,,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Lacerta vivipara,European common lizard,1.64,36,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Lacertidae,Latastia longicaudata,Southern long-tailed sand lizard,1.61,,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Ophisops elegans,Snake-eyed lizard,1.57,38,FCM,RBC,BF,288
+Reptilia,Squamata,Lacertidae,Podarcis dugesii,Madeiran lizard,2.44,38,FD,RBC,PS,368
+Reptilia,Squamata,Lacertidae,Podarcis hispanica,Iberian wall lizard,1.19,38,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Podarcis melisellensis,Dalmatian wall lizard,1.3,38,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Podarcis melisellensis,Dalmatian wall lizard,2.65,,FD,RBC,V,75
+Reptilia,Squamata,Lacertidae,Podarcis muralis,European wall lizard,1.54,,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Podarcis muralis,European wall lizard,1.7,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Lacertidae,Podarcis muralis,European wall lizard,2.36,38,FD,RBC,PS,368
+Reptilia,Squamata,Lacertidae,Podarcis pityusensis,Ibiza wall lizard,2.7,38,FD,RBC,PS,368
+Reptilia,Squamata,Lacertidae,Podarcis sicula campestris,Italian wall lizard,1.3,,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Podarcis sicula campestris,Italian wall lizard,2.21,38,FD,RBC,PS,368
+Reptilia,Squamata,Lacertidae,Podarcis sicula sicula,Italian wall lizard,2.2,38,FD,RBC,PS,368
+Reptilia,Squamata,Lacertidae,Podarcis sicula sicula,Italian wall lizard,2.2,,FD,RBC,V,75
+Reptilia,Squamata,Lacertidae,Podarcis sicula sicula,Italian wall lizard,2.2,,FD,RBC,NS,334
+Reptilia,Squamata,Lacertidae,Podarcis tiliguerta,Tyrrhenian wall lizard,2.25,38,FD,RBC,V,75
+Reptilia,Squamata,Lacertidae,Psammodromus algirus,Large psammodromus,1.4,,SCF,RBC,HS,106
+Reptilia,Squamata,Lacertidae,Psammodromus algirus,Large psammodromus,2.94,40,FD,RBC,PS,368
+Reptilia,Squamata,Lacertidae,Takydromus sexlineatus,Six-lined grass lizard,2.4,40,FD,RBC,V,75
+Reptilia,Squamata,Lacertidae,Timon lepidus,Jeweled lacerta,2.35,,FD,RBC,V,75
+Reptilia,Squamata,Lacertidae,Timon pater,Unknown,1.44,,SCF,RBC,HS,106
+Reptilia,Squamata,Phrynosomatidae,Phrynosoma cornutum,Texas horned lizard,2.14,34,SCF,RBC,HS,106
+Reptilia,Squamata,Phrynosomatidae,Sceloporus magister,Desert spiny lizard,2.73,26,SCF,RBC,HS,106
+Reptilia,Squamata,Phrynosomatidae,Sceloporus occidentalis,Western fence lizard,2.36,22,FD,RBC,PS,370
+Reptilia,Squamata,Phrynosomatidae,Uma inornata,Coachella Valley fringe-toed lizard,2.28,34,SCF,RBC,HS,106
+Reptilia,Squamata,Polychrotidae,Anisolepis grilli,Unknown,2.09,36,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Polychrotidae,Anolis aeneus,Anole,1.44,,SCF,RBC,HS,106
+Reptilia,Squamata,Polychrotidae,Anolis auratus,Grass anole,2.07,30,SCF,RBC,HS,106
+Reptilia,Squamata,Polychrotidae,Anolis carolinensis,Green anole,1.61,,SCF,RBC,HS,106
+Reptilia,Squamata,Polychrotidae,Anolis carolinensis,Green anole,2.2,,FCM,RBC,GD,392
+Reptilia,Squamata,Polychrotidae,Anolis carolinensis,Green anole,2.3,,FD,RBC,HS,14
+Reptilia,Squamata,Polychrotidae,Anolis carolinensis,Green anole,3.06,36,FD,RBC,PS,368
+Reptilia,Squamata,Polychrotidae,"Anolis cf. nitens, sp.1",Anole,2.29,,FCM,RBC,BF,288
+Reptilia,Squamata,Polychrotidae,"Anolis cf. nitens, sp.2",Anole,2.49,,FCM,RBC,BF,288
+Reptilia,Squamata,Polychrotidae,Anolis equestris,Knight anole,1.89,36,SCF,RBC,HS,106
+Reptilia,Squamata,Polychrotidae,Anolis sagraei,Brown anole,1.89,28,SCF,RBC,HS,106
+Reptilia,Squamata,Polychrotidae,Enyalius iheringii,Unknown,2.48,36,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Polychrotidae,Polychrus marmoratus,Common monkey lizard,1.86,,SCF,RBC,HS,106
+Reptilia,Squamata,Pygopodidae,Lialis burtonis,Burton's snake lizard,2.51,34,FD,RBC,PS,370
+Reptilia,Squamata,Scincidae,Asymblepharus alaicus,Skink,1.93,30,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Scincidae,Carlia triacantha,Desert rainbow skink,1.41,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Chalcides chalcides,Three-toed skink,1.68,28,SCF,RBC,HS,106
+Reptilia,Squamata,Scincidae,Chalcides mionecton,Skink,1.05,,SCF,RBC,HS,106
+Reptilia,Squamata,Scincidae,Chalcides mionecton,Skink,2.08,,FD,RBC,PS,368
+Reptilia,Squamata,Scincidae,Chalcides ocellatus,Ocellated skink,1.72,,SCF,RBC,HS,106
+Reptilia,Squamata,Scincidae,Chalcides ocellatus,Ocellated skink,3.2,28,FD,RBC,V,75
+Reptilia,Squamata,Scincidae,Chalcides viridanus,Canarian skink,1.75,,SCF,RBC,HS,106
+Reptilia,Squamata,Scincidae,Cryptoblepharus plagiocephalus,Snake-eyed skink,1.51,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Ctenotus alacer,Skink,1.57,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Ctenotus leonhardii,Leonhard's skink,1.65,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Ctenotus quattuordecimlineatus,Fourteen-lined skink,1.59,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Ctenotus saxatilis,Skink,1.5,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Egernia inornata,Desert skink,1.69,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Eremiascincus fasciolatus,Narrow-banded sand swimmer,1.61,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Eumeces inexpectatus,Southeastern five-lined skink,2.67,26,FD,RBC,PS,368
+Reptilia,Squamata,Scincidae,Lerista desertorum,Skink,1.64,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Lerista frosti,Skink,2.6,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Lerista labialis,Southern sandslider,1.73,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Mabuya capensis,Cape skink,1.72,32,SCF,RBC,HS,106
+Reptilia,Squamata,Scincidae,Mabuya carinata,Shiny skink,1.44,32,SCF,RBC,HS,106
+Reptilia,Squamata,Scincidae,Mabuya mabouya,American shiny skink,1.27,30,FCM,RBC,BF,288
+Reptilia,Squamata,Scincidae,Mabuya macularia,Spotted skink,2.11,32,FD,RBC,PS,368
+Reptilia,Squamata,Scincidae,Mabuya multifasciata,Many-striped mabuya,1.44,32,SCF,RBC,HS,106
+Reptilia,Squamata,Scincidae,Mabuya quinquetaeniata,Rainbow rock skink,1.09,32,SCF,RBC,HS,106
+Reptilia,Squamata,Scincidae,Mabuya sp.,Skink,1.73,0-0,FD,RBC,XL,604
+Reptilia,Squamata,Scincidae,Mabuya varia,Savannah variable skink,1.26,32,SCF,RBC,HS,106
+Reptilia,Squamata,Scincidae,Mabuya varia,Savannah variable skink,1.54,,FD,RBC,XL,604
+Reptilia,Squamata,Scincidae,Menetia greyii,Common dwarf skink,1.71,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Mochlus sundevalli,Skink,1.3,30,SCF,RBC,HS,106
+Reptilia,Squamata,Scincidae,Morethia ruficauda,Southwestern mulch skink,1.64,,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Novoeumeces schneideri,Schneider's skink,2.59,,SCF,RBC,HS,106
+Reptilia,Squamata,Scincidae,Sphenops sphenopsiformis,Skink,2.27,28,FD,RBC,PS,368
+Reptilia,Squamata,Scincidae,Tiliqua scincoides,Eastern blue-tongued lizard,1.82,32,FCM,RBC,RP,288
+Reptilia,Squamata,Scincidae,Tiliqua scincoides,Eastern blue-tongued lizard,1.82,,SCF,RBC,HS,106
+Reptilia,Squamata,Teiidae,Ameiva ameiva,Jungle runner,1.66,,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Teiidae,Ameiva ameiva,Jungle runner,2.42,50,FD,RBC,PS,368
+Reptilia,Squamata,Teiidae,Ameiva chrysolaema,Blue ameiva,2.45,50,SCF,RBC,HS,106
+Reptilia,Squamata,Teiidae,Ameiva sp.,Ameiva,1.79,,SCF,RBC,HS,106
+Reptilia,Squamata,Teiidae,Cnemidophorus lemniscatus,Rainbow lizard,1.42,50,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Teiidae,Kentropyx calcarata,N/A,1.55,,FCM,RBC,BF,288
+Reptilia,Squamata,Teiidae,Kentropyx paulensis,N/A,1.32,50,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Teiidae,Pantodactylus quadrilineatus,N/A,1.61,,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Teiidae,Tupinambis teguixin,Tegu,1.825,,SCF,RBC,HS,106
+Reptilia,Squamata,Teiidae,Tupinambis teguixin,Tegu,2.13,,FD,RBC,"HS,ÊBI",473
+Reptilia,Squamata,Teiidae,Tupinambis teguixin,Tegu,2.92,38,FD,RBC,PS,368
+Reptilia,Squamata,Teiidae,Tupinambis teguixin,Tegu,3.05,,SCF,RBC,HS,106
+Reptilia,Squamata,Trogonophidae,Trogonophis wiegmanni,N/A,1.65,36,FD,RBC,PS,370
+Reptilia,Squamata,Tropiduridae,Liolaemus sp.,Snow swift,2.05,,FCM,RBC,GD,392
+Reptilia,Squamata,Tropiduridae,Tropidurus torquatus,Amazon collared swift,2.24,,SCF,RBC,HS,106
+Reptilia,Squamata,Tropiduridae,Tropidurus umbra,Green tree climber,2.11,,FCM,RBC,BF,288
+Reptilia,Squamata,Typhlopidae,Ramphotyphlops braminus,Flowerpot blindsnake,2.98,,FCM,RBC,BF,288
+Reptilia,Squamata,Typhlopidae,Typhlops punctatus,Spotted blindsnake,1.89,32,SCF,RBC,HS,106
+Reptilia,Squamata,Typhlopidae,Typhlops vermicularis,European blindsnake,1.96,,FCM,RBC,BF,288
+Reptilia,Squamata,Varanidae,Varanus bengalensis,Bengal monitor,2.24,,SCF,RBC,HS,106
+Reptilia,Squamata,Varanidae,Varanus bengalensis,Bengal monitor,2.36,40,FD,RBC,PS,368
+Reptilia,Squamata,Varanidae,Varanus bengalensis,Bengal monitor,2.4,,FD,RBC,NS,334
+Reptilia,Squamata,Varanidae,Varanus exanthematicus,Savannah monitor,1.68,,SCF,RBC,HS,106
+Reptilia,Squamata,Varanidae,Varanus exanthematicus,Savannah monitor,2.43,,FD,RBC,PS,368
+Reptilia,Squamata,Varanidae,Varanus griseus,Desert monitor,1.19,,SCF,RBC,HS,106
+Reptilia,Squamata,Varanidae,Varanus komodoensis,Komodo dragon,1.93,,FCM,RBC,"HS,ÊOM",598
+Reptilia,Squamata,Varanidae,Varanus niloticus,Nile monitor,2.19,,FCM,RBC,"HS,ÊOM",598
+Reptilia,Squamata,Varanidae,Varanus salvadorii,Crocodile monitor,2.29,,FCM,RBC,"HS,ÊOM",598
+Reptilia,Squamata,Varanidae,Varanus salvator,Water monitor,2.03,,SCF,RBC,HS,106
+Reptilia,Squamata,Viperidae,Agkistrodon contortrix,Copperhead,1.37,,SCF,RBC,HS,106
+Reptilia,Squamata,Viperidae,Bothriechis lateralis,Green palm viper,1.91,,FD,RBC,PS,370
+Reptilia,Squamata,Viperidae,Bothriechis schlegelii,Eyelash pit viper,1.61,,SCF,RBC,HS,106
+Reptilia,Squamata,Viperidae,Bothriechis schlegelii,Eyelash pit viper,2.21,,FD,RBC,PS,370
+Reptilia,Squamata,Viperidae,Bothrops asper,Terciopelo,2.71,36,FD,RBC,PS,370
+Reptilia,Squamata,Viperidae,Bothrops atrox,Fer-de-lance,1.82,36,FCM,RBC,BF,288
+Reptilia,Squamata,Viperidae,Bothrops jararaca,Jararaca,2.25,36,FD,RBC,HS,14
+Reptilia,Squamata,Viperidae,Cerrophidion godmani,Viper,2.2,,FD,RBC,PS,370
+Reptilia,Squamata,Viperidae,Crotalus durissus terrificus,South American rattlesnake,1.32,36,FD,RBC,PS,370
+Reptilia,Squamata,Viperidae,Crotalus horridus,Timber rattlesnake,1.75,36,FCM,RBC,"GD,ÊHS,ÊV",504
+Reptilia,Squamata,Viperidae,Daboia russelii,Russel's viper,2.07,,SCF,RBC,HS,106
+Reptilia,Squamata,Viperidae,Echis carinatus,Saw-scaled viper,1.3,36,SCF,RBC,HS,106
+Reptilia,Squamata,Viperidae,Lachesis muta,Bushmaster,2.16,36,FD,RBC,PS,370
+Reptilia,Squamata,Viperidae,Macrovipera lebetina,Levantine viper,2.07,36,SCF,RBC,HS,106
+Reptilia,Squamata,Viperidae,Trimeresurus albolabris,White-lipped tree viper,2.66,,SCF,RBC,HS,106
+Reptilia,Squamata,Viperidae,Vipera ammodytes,Long-nosed viper,1.79,,SCF,RBC,HS,106
+Reptilia,Squamata,Viperidae,Vipera aspis,European asp,2.91,42,FD,RBC,PS,370
+Reptilia,Squamata,Viperidae,Vipera berus,Adder,1.88,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Squamata,Viperidae,Vipera berus,Adder,2.38,,SCF,RBC,HS,106
+Reptilia,Squamata,Viperidae,Vipera berus,Adder,3.06,36,FD,RBC,PS,370
+Reptilia,Squamata,Viperidae,Vipera eriwanensis,Steppe adder,1.79,,FCM,RBC,BF,288
+Reptilia,Testudines,Cheloniidae,Chelonia mydas,Green turtle,2.64,56,FD,RBC,GD,"323,Ê324"
+Reptilia,Testudines,Chelydridae,Chelydra serpentina,Common snapping turtle,2.49,,FD,RBC,GD,324
+Reptilia,Testudines,Chelydridae,Chelydra serpentina,Common snapping turtle,2.51,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Testudines,Chelydridae,Chelydra serpentina,Common snapping turtle,2.7,,SCF,RBC,HS,106
+Reptilia,Testudines,Chelydridae,Chelydra serpentina,Common snapping turtle,2.81,52,FD,RBC,PS,368
+Reptilia,Testudines,Chelydridae,Platysternon megacephalum,Big-headed turtle,2.7,54,FD,RBC,PS,368
+Reptilia,Testudines,Emydidae,Chinemys reevesii,Reeve's turtle,2.42,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Chrysemys picta,Painted turtle,2.57,50,FCM,RBC,"HS,ÊRT",542
+Reptilia,Testudines,Emydidae,Chrysemys picta,Painted turtle,2.61,,FIA,RBC,GD,575
+Reptilia,Testudines,Emydidae,Chrysemys picta,Painted turtle,3.22,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Chrysemys picta dorsalis,Southern painted turtle,2.98,50,FD,RBC,PS,368
+Reptilia,Testudines,Emydidae,Clemmys caspica,Caspian turtle,1.82,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Clemmys guttata,Spotted turtle,2.57,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Testudines,Emydidae,Clemmys sp.,Pond turtle,2.46,,FD,RBC,GD,324
+Reptilia,Testudines,Emydidae,Cuora amboinensis,Malayan box turtle,2.14,50,FD,RBC,PS,370
+Reptilia,Testudines,Emydidae,Cuora amboinensis,Malayan box turtle,2.42,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Cyclemys dentata,Asian leaf turtle,3.05,50,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Emydoidea blandingii,Blanding's turtle,2.65,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Testudines,Emydidae,Emys orbicularis,European pond turtle,2.6,50,FCM,RBC,"HS,ÊRT",542
+Reptilia,Testudines,Emydidae,Graptemys pseudogeographica,False map turtle,2.17,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Heosemys grandis,Giant Asian pond turtle,3.12,,FD,RBC,PS,368
+Reptilia,Testudines,Emydidae,Heosemys grandis,Giant Asian pond turtle,3.29,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Heosemys spinosa,Spiny turtle,4.1,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Kachuga trivittata,Burmese roofed turtle,2.42,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Melanochelys trijuga,Indian pond terrapin,2.84,52,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Notochelys platynota,Flat-shelled terrapin,2,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Pseudemys concinna,Eastern river cooter,2.42,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Pseudemys concinna,Eastern river cooter,4.17,50,FD,RBC,PS,368
+Reptilia,Testudines,Emydidae,Siebenrockiella crassicollis,Borneo black leaf turtle,2.35,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Terrapene carolina,Eastern box turtle,2.59,,FCM,RBC,"HS,ÊRT",542
+Reptilia,Testudines,Emydidae,Terrapene carolina,Eastern box turtle,2.75,,FCM,RBC,"GD,ÊHS,ÊV",504
+Reptilia,Testudines,Emydidae,Terrapene carolina,Eastern box turtle,4.18,50,FD,RBC,PS,368
+Reptilia,Testudines,Emydidae,Terrapene ornata,Ornate box turtle,2.17,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Trachemys dorbigni,Orbigny's slider,3.26,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Trachemys scripta,Red-eared slider,1.93,,SCF,RBC,HS,106
+Reptilia,Testudines,Emydidae,Trachemys scripta,Red-eared slider,2.59,,FCM,RBC,GD,285
+Reptilia,Testudines,Emydidae,Trachemys scripta,Red-eared slider,2.65,,FCM,RBC,"GD,ÊHS,ÊV",504
+Reptilia,Testudines,Emydidae,Trachemys scripta elegans,Red-eared slider,1.43,,FK,IC,HS,805
+Reptilia,Testudines,Emydidae,Trachemys terrapen,Jamaican slider,3.75,,SCF,RBC,HS,106
+Reptilia,Testudines,Kinosternidae,Kinosternon subrubrum,Eastern mud turtle,2.66,,SCF,RBC,HS,106
+Reptilia,Testudines,Kinosternidae,Kinosternon subrubrum,Eastern mud turtle,2.8,56,FD,RBC,PS,368
+Reptilia,Testudines,Kinosternidae,Sternotherus odoratus,Common musk turtle,2.65,56,FD,RBC,PS,368
+Reptilia,Testudines,Pelomedusidae,Pelomedusa subrufa,Cape terrapin,1.79,,SCF,RBC,HS,106
+Reptilia,Testudines,Pelomedusidae,Pelomedusa subrufa,Cape terrapin,2.3,36,FD,RBC,PS,368
+Reptilia,Testudines,Pelomedusidae,Pelusios niger,Black side-necked turtle,2.17,,SCF,RBC,HS,106
+Reptilia,Testudines,Testudinidae,Geochelone carbonaria,Red-footed tortoise,3.88,52,FD,RBC,PS,368
+Reptilia,Testudines,Testudinidae,Geochelone elegans,Indian star tortoise,3.85,,SCF,RBC,HS,106
+Reptilia,Testudines,Testudinidae,Geochelone nigra,Galapagos tortoise,3.03,,FCM,RBC,GD,282
+Reptilia,Testudines,Testudinidae,Geochelone nigra,Galapagos tortoise,3.9,,FD,RBC,V,75
+Reptilia,Testudines,Testudinidae,Geochelone nigro nigrita,Galapagos tortoise,3.08,,FCM,RBC,"HS,ÊOM",598
+Reptilia,Testudines,Testudinidae,Geochelone pardalis,Leopard tortoise,2.52,,SCF,RBC,HS,106
+Reptilia,Testudines,Testudinidae,Gopherus agassizii,Desert tortoise,2.92,52,FD,RBC,HS,14
+Reptilia,Testudines,Testudinidae,Indotestudo elongata,Elongated tortoise,3.57,,SCF,RBC,HS,106
+Reptilia,Testudines,Testudinidae,Kinixys belliana,Bell's hingeback tortoise,2.35,,SCF,RBC,HS,106
+Reptilia,Testudines,Testudinidae,Kinixys belliana,Bell's hingeback tortoise,3.56,,FD,RBC,PS,368
+Reptilia,Testudines,Testudinidae,Malacochersus tornieri,Pancake tortoise,1.89,,SCF,RBC,HS,106
+Reptilia,Testudines,Testudinidae,Psammobates oculiferus,Kalahari star tortoise,2.14,,SCF,RBC,HS,106
+Reptilia,Testudines,Testudinidae,Testudo graeca,Greek tortoise,5.44,52,FD,RBC,PS,368
+Reptilia,Testudines,Testudinidae,Testudo hermanni,Hermann's tortoise,2.52,,SCF,RBC,HS,106
+Reptilia,Testudines,Testudinidae,Testudo hermanni,Hermann's tortoise,3.5,,FD,RBC,NS,334
+Reptilia,Testudines,Testudinidae,Testudo hermanni,Hermann's tortoise,3.53,52,FD,RBC,PS,368
+Reptilia,Testudines,Trionychidae,Amyda cartilaginea,Asian softshell turtle,4.57,66,FD,RBC,PS,368
+Reptilia,Testudines,Trionychidae,Apalone ferox,Florida softshell turtle,2.7,66,FD,RBC,HS,14
+Reptilia,Testudines,Trionychidae,Apalone spinifera,Spiny softshell turtle,2.7,,FCM,RBC,"GD,ÊHS,ÊV",504
