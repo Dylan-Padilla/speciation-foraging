@@ -1739,7 +1739,7 @@ qqline(resid(repro.model2), col = "dodgerblue", lwd = 2)
 
 ## setting up the data for modeling the body temperature
 
-tb.data <- pruned.data.mrg[!is.na(pruned.data.mrg$'Mean body temperature') & !is.na(pruned.data.mrg$'Annual reproductive \n output'), ]
+tb.data <- pruned.data.mrg[!is.na(pruned.data.mrg$'Mean body temperature') & !is.na(pruned.data.mrg$'Reproductive output'), ]
 
 check <- name.check(lizard.tree, tb.data)
 rm_phy <- check$tree_not_data
