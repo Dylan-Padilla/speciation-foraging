@@ -9,8 +9,6 @@ format:
 ---
 
 
-![](imgs/yale-logo.png)
-
 ```{r, include = FALSE}
 
 knitr::opts_chunk$set(comment = ">", fig.width = 7, fig.height = 7, dpi = 300, warning = FALSE, message = FALSE)

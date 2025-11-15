@@ -4587,59 +4587,17 @@
     "A.sagrei_pi.windowed.pi": {
       "checksum": "549b731e7e95c50a80b27889130c3111"
     },
-    "anole.png": {
-      "checksum": "b93d33c2ea8e326e0a887c609f7753cc"
-    },
     "anova-models.RData": {
       "checksum": "0dc39716337cc54b7efeab7fd8fc8999"
     },
     "area-of-lizard-ranges.csv": {
       "checksum": "bf1a4f7d4b3e597c8c49db93b88ca19e"
     },
-    "boa.png": {
-      "checksum": "d7e7d948f673967385b80879bf081e36"
-    },
-    "chapter9-lizbio.png": {
-      "checksum": "3530349ed86e02c2f32f658ffd405e5a"
-    },
-    "clamy.png": {
-      "checksum": "d110d3ab8f308e76608dbc20d80720ae"
-    },
-    "colubrid.png": {
-      "checksum": "214286c2323ac8a5501f0e7ce5f90b50"
-    },
     "data_Meiri-2024.csv": {
       "checksum": "ef1d1df5eccb045f580572077e2b0c00"
     },
-    "dispersal-determinants.png": {
-      "checksum": "a5fd3397104dd6c3abe282d9ef433570"
-    },
     "figure.pdf": {
       "checksum": "e4b967d287e71986c4137b92d77f0eae"
-    },
-    "figure2.png": {
-      "checksum": "b5db74110c09fbc82f98d8036bb1acf4"
-    },
-    "figure3.png": {
-      "checksum": "66fd3c0ba06913ff610d0d0db198b00a"
-    },
-    "figure4.png": {
-      "checksum": "c04f66e77703d47a59faa1bd39ff8534"
-    },
-    "figure5.png": {
-      "checksum": "ab212e37131a9c7482c579cc4eb0de1d"
-    },
-    "figure6.png": {
-      "checksum": "12eff5056458b29ca59c4bea55667b84"
-    },
-    "figureS1.png": {
-      "checksum": "f5dd4dd1d92201b0961f8e35bb230024"
-    },
-    "figureS2.png": {
-      "checksum": "73b2a1bcac65332b2751b8a540b5a258"
-    },
-    "gecko.png": {
-      "checksum": "da4f50ed54b1e70e8241ac36c7c1d3cc"
     },
     "genome_size_alternative.tsv": {
       "checksum": "a45852419b6b9c8a22c2a8d44757fbf3"
@@ -4780,7 +4738,7 @@
       "checksum": "0ec621fcba0372c5057b348d6ba1699c"
     },
     "index_files/figure-html/unnamed-chunk-15-1.png": {
-      "checksum": "83cd5b550ed8eeb5d0b255862de03209"
+      "checksum": "bc751a4245d6aa8c7210ef2f5b6de2c7"
     },
     "index_files/figure-html/unnamed-chunk-15-2.png": {
       "checksum": "0ec621fcba0372c5057b348d6ba1699c"
@@ -5041,19 +4999,13 @@
       "checksum": "d828775275749701b48bd9d958814111"
     },
     "index.html": {
-      "checksum": "949cd2afb9f562418e2515e02460e1a9"
+      "checksum": "17885d61e534f2f1a8d5923aa3b10d13"
     },
     "index.qmd": {
-      "checksum": "1c5afdc44c5a9fbb8538222c5d2e1e9c"
+      "checksum": "251693a0efb61c5877b56cdee0590644"
     },
     "index.rmarkdown": {
-      "checksum": "6431112f3136cb453d944d9f4ea66003"
-    },
-    "komodo.png": {
-      "checksum": "898a32951330e5de90a3f5be95e77b7b"
-    },
-    "lacerta.png": {
-      "checksum": "74d0504949f083bc4d673482f712f33a"
+      "checksum": "c62a63efa0eb421bcb3c253e0e11c6bc"
     },
     "mcmc_modelOU-10e4.RData": {
       "checksum": "b25dc828b755ebfdeffdafb96297b7b0"
@@ -5070,9 +5022,6 @@
     "P.muralis_pi.windowed.pi": {
       "checksum": "5706c506d3d0e1fcdc3e610905ebe408"
     },
-    "p.muralis.png": {
-      "checksum": "353490b422649bd70ca94f71b928ef5c"
-    },
     "P.muralis.pop_D.Tajima.D": {
       "checksum": "2fd9dca0d0bde1d3280da4420da282de"
     },
@@ -5088,26 +5037,11 @@
     "P.siculus_pi.windowed.pi": {
       "checksum": "ada473871784fe7ac3d66df959234bf0"
     },
-    "p.siculus.png": {
-      "checksum": "a3fe316b5729bdc34f61dab6c25be458"
-    },
-    "sagrei.png": {
-      "checksum": "e1d1d6fe26490c98d8e79f841b6348c3"
-    },
-    "skink.png": {
-      "checksum": "18c66b118455efa39420a5023d532213"
-    },
     "squamate-gc-values.csv": {
       "checksum": "214b0c73e7f4722d4aaf5212cb11dadc"
     },
     "squamates-comparative-genomic-data.tsv": {
       "checksum": "981d24d2106427f4d730cb1c46347446"
-    },
-    "tegu.png": {
-      "checksum": "6d977a92902296b3cd30d126e6e914e4"
-    },
-    "yale-logo.png": {
-      "checksum": "ed8784f0b198162cdd69fffbcf82bc2e"
     },
     "zheng-wiens2016-tree.tre": {
       "checksum": "bf77589f710fa40a53f227310976a8c9"
