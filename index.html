@@ -6067,31 +6067,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>&gt; 
 &gt; Fit
 &gt;       -lnL      AIC     AICc Rate.cat ntax
-&gt;  -301.5958 623.1917 623.7168        2  430
+&gt;  -302.6523 625.3045 625.8296        2  430
 &gt; 
 &gt; Legend
 &gt;     1     2     3     4 
 &gt; "0_0" "0_1" "1_0" "1_1" 
 &gt; 
 &gt; Rates
-&gt;             (1,R1)      (2,R1)      (3,R1)      (4,R1)       (1,R2)
-&gt; (1,R1)          NA 0.095817452 0.001059764          NA 2.300998e-02
-&gt; (2,R1) 0.095817452          NA          NA 0.005597538           NA
-&gt; (3,R1) 0.001059764          NA          NA 0.020363111           NA
-&gt; (4,R1)          NA 0.005597538 0.020363111          NA           NA
-&gt; (1,R2) 0.006188131          NA          NA          NA           NA
-&gt; (2,R2)          NA 0.006188131          NA          NA 1.000119e-09
-&gt; (3,R2)          NA          NA 0.006188131          NA 2.272881e-03
-&gt; (4,R2)          NA          NA          NA 0.006188131           NA
-&gt;              (2,R2)       (3,R2)       (4,R2)
-&gt; (1,R1)           NA           NA           NA
-&gt; (2,R1) 2.300998e-02           NA           NA
-&gt; (3,R1)           NA 0.0230099756           NA
-&gt; (4,R1)           NA           NA 0.0230099756
-&gt; (1,R2) 1.000119e-09 0.0022728813           NA
-&gt; (2,R2)           NA           NA 0.0042475586
-&gt; (3,R2)           NA           NA 0.0003845447
-&gt; (4,R2) 4.247559e-03 0.0003845447           NA
+&gt;             (1,R1)      (2,R1)      (3,R1)      (4,R1)      (1,R2)      (2,R2)
+&gt; (1,R1)          NA 1.00000e+02 0.000000001          NA 0.001571639          NA
+&gt; (2,R1) 1.00000e+02          NA          NA 0.000000001          NA 0.001571639
+&gt; (3,R1) 1.00000e-09          NA          NA 0.000000001          NA          NA
+&gt; (4,R1)          NA 1.00000e-09 0.000000001          NA          NA          NA
+&gt; (1,R2) 1.72723e-03          NA          NA          NA          NA 0.002596682
+&gt; (2,R2)          NA 1.72723e-03          NA          NA 0.002596682          NA
+&gt; (3,R2)          NA          NA 0.001727230          NA 0.002926485          NA
+&gt; (4,R2)          NA          NA          NA 0.001727230          NA 0.004861906
+&gt;             (3,R2)      (4,R2)
+&gt; (1,R1)          NA          NA
+&gt; (2,R1)          NA          NA
+&gt; (3,R1) 0.001571639          NA
+&gt; (4,R1)          NA 0.001571639
+&gt; (1,R2) 0.002926485          NA
+&gt; (2,R2)          NA 0.004861906
+&gt; (3,R2)          NA 0.003689104
+&gt; (4,R2) 0.003689104          NA
 &gt; 
 &gt; Arrived at a reliable solution</code></pre>
 </div>
@@ -6100,7 +6100,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb225"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb225-1"><a href="#cb225-1"></a><span class="fu">c</span>(HMM_3state_SYM<span class="sc">$</span>AICc, HMM_3state_ER<span class="sc">$</span>AICc, HMM_3state_ARD<span class="sc">$</span>AICc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt; [1] 623.7168 619.8273 630.5381</code></pre>
+<pre><code>&gt; [1] 625.8296 619.8274 627.5764</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -6111,8 +6111,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb227-5"><a href="#cb227-5"></a><span class="fu">colMeans</span>(HMM_3state_ER<span class="sc">$</span>tip.states)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>&gt; [1] 0.04242882 0.05142455 0.12294709 0.10375662 0.03896653 0.09508707 0.36077384
-&gt; [8] 0.18461547</code></pre>
+<pre><code>&gt; [1] 0.04239587 0.05134265 0.12261679 0.10358625 0.03899948 0.09516898 0.36110414
+&gt; [8] 0.18478585</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -6993,7 +6993,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb231-210"><a href="#cb231-210"></a></span>
 <span id="cb231-211"><a href="#cb231-211"></a><span class="in">```</span></span>
 <span id="cb231-212"><a href="#cb231-212"></a></span>
-<span id="cb231-213"><a href="#cb231-213"></a><span class="in">```{r, include = FALSE}</span></span>
+<span id="cb231-213"><a href="#cb231-213"></a><span class="in">```{r,  include = FALSE}</span></span>
 <span id="cb231-214"><a href="#cb231-214"></a></span>
 <span id="cb231-215"><a href="#cb231-215"></a><span class="in">load('data/stochastic.map.sym.RData')</span></span>
 <span id="cb231-216"><a href="#cb231-216"></a></span>

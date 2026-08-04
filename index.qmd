@@ -209,7 +209,7 @@ save(lizard.maps.sym, file = "stochastic.map.sym.RData")
 
 ```
 
-```{r, include = FALSE}
+```{r,  include = FALSE}
 
 load('data/stochastic.map.sym.RData')
 
