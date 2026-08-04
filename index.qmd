@@ -1,5 +1,5 @@
 ---
-title: "Data analysis for: Relative High Fitness and Large Genome Size May Lead to the High Diversification of Plastic Foragers"
+title: "Interaction Between Fitness and Genetic Diversity May Lead to the Relatively High Diversification of Active Foragers"
 ##author: '[Dylan Padilla](https://dylanpadilla.netlify.app/), Martha Munoz, David Skelly <br> Yale In#stitute for Biospheric Studies & Yale School of the Environment, New Haven, CT 06511'
 format:
   html:
@@ -27,6 +27,7 @@ library(BAMMtools)
 library(bayou)
 library(caper)
 library(car)
+library(corHMM)
 library(cowplot)
 library(diversitree)
 library(geiger)
@@ -42,13 +43,13 @@ library(plotrix)
 library(png)
 library(phytools)
 library(raster)
+library(reshape)
 library(rsconnect)
 library(scales)
 library(shape)
 library(TreeSim)
 library(vioplot)
 library(viridis)
-
 
 ## Create the manifest.json file for posit connect
 
@@ -66,15 +67,16 @@ R.version
 
 ##  Loading the data
 
-raw.data <- read.csv('data_Meiri-2024.csv', as.is = TRUE)
+raw.data <- read.csv('data/data_Meiri-2024.csv', as.is = TRUE)
 str(raw.data)
 
 
-range.data <- read.csv('area-of-lizard-ranges.csv')
+range.data <- read.csv('data/area-of-lizard-ranges2.csv')
 str(range.data)
+colnames(range.data)[7] <- "area"
 area <- range.data[c(1, 7)]
 
-lizard.tree <- read.tree('zheng-wiens2016-tree.tre')
+lizard.tree <- read.tree('data/zheng-wiens2016-tree.tre')
 
 ## Checking out the variables
 
@@ -207,14 +209,14 @@ save(lizard.maps.sym, file = "stochastic.map.sym.RData")
 
 ```
 
-```{r, include = FALSE, eval = FALSE}
+```{r, include = FALSE}
 
-load('stochastic.map.sym.RData')
+load('data/stochastic.map.sym.RData')
 
 ```
 
 
-```{r, eval = FALSE}
+```{r}
 
 ## convert to tree with unbranching nodes
 
@@ -334,9 +336,6 @@ box()
 ##dev.off()
 
 ```
-
-![](imgs/figure4.png)
-
 
 
 ```{r}
@@ -486,7 +485,7 @@ save(mcmc.fit.full, file = "mcmc.fit.full.RData")
 
 ```{r, include = FALSE}
 
-load('mcmc.fit.full-10e5(2).RData')
+load('data/mcmc.fit.full-10e5(2).RData')
 
 
 ##files <- list.files('results/', full.names = TRUE)
@@ -502,6 +501,134 @@ load('mcmc.fit.full-10e5(2).RData')
 
 
 ```
+
+
+
+```{r, eval = FALSE}
+
+
+pruned.tree <- force.ultrametric(pruned.tree)
+is.ultrametric(pruned.tree)
+
+## set up MuHISSE model
+## multiHiSSE allows multiple states (0, 1, ..., N) and hidden states (A, B, ...)
+## For 3 states (0,1,2) and 2 hidden states (A,B), the states are:
+## 0A, 1A, 2A, 0B, 1B, 2B
+
+pruned.data$Foraging.mode <- as.character(pruned.data$Foraging.mode)
+pruned.data$Foraging.mode[pruned.data$Foraging.mode == 'active'] <- 0
+pruned.data$Foraging.mode[pruned.data$Foraging.mode == 'plastic'] <- 1
+pruned.data$Foraging.mode[pruned.data$Foraging.mode == 'sit-and-wait'] <- 2
+
+# recode into two binary columns
+pruned.data$Char1 <- ifelse(pruned.data$Foraging.mode == 2, 1, 0)
+pruned.data$Char2 <- ifelse(pruned.data$Foraging.mode == 1, 1, 0)
+
+# 3. Format exactly for MuHiSSE
+# MuHiSSE requires: Column 1 = Taxa, Column 2 = Character 1, Column 3 = Character 2
+
+muhisse_data <- pruned.data[ , c("Species", "Char1", "Char2")]
+#head(muhisse_data)
+
+## create a transition matrix for 3 states and 2 hidden states
+## this creates a "full" model where all transitions are possible.
+
+trans.rates <- TransMatMakerMuHiSSE(hidden.traits = 1)
+
+# 2. Drop the unused '11' state combinations (State 4 and State 8 in the full matrix)
+# This removes state 11A and 11B from your analysis
+# Generate and filter the transition matrix
+trans.rates <- ParDrop(trans.rates, c(4, 8))
+
+# View the final matrix to ensure 11A and 11B are isolated
+
+print(trans.rates)
+
+# Define Turnover (speciation + extinction) and Extinction Fraction (extinction/speciation)
+# Let's assume 2 hidden states, so we have 2 sets of rates (A and B).
+# For a 3-state model, this means we map 6 total possible states (0A, 1A, 2A, 0B, 1B, 2B)
+# to fewer parameters.
+# In this example, we test if turnover differs between states 0,1,2 within
+# the hidden categories.
+
+# TURNOVER VECTOR setup (Net turnover = Speciation + Extinction)
+# Format corresponds to: (00A, 01A, 10A, 11A, 00B, 01B, 10B, 11B)
+# Assign '0' to positions 4 and 8 to drop state 11
+
+turnover <- c(1, 2, 3, 0, 4, 5, 6, 0)
+
+# EXTINCTION FRACTION VECTOR setup (Eps = Extinction / Speciation)
+# We can estimate distinct extinction fractions or constrain them to be equal.
+# Let's use the same parameter layout, dropping positions 4 and 8.
+
+eps <- c(1, 2, 3, 0, 4, 5, 6, 0)
+
+# SAMPLING FRACTIONS (f)
+# Relative global proportion of species sampled per state combination.
+# If you have complete sampling, set valid states to 1 and dropped states to 0.
+
+f <- c(as.numeric(tapply(X = pruned.data$Species,
+                                  INDEX = list(pruned.data$Foraging.mode),
+                         length)/11989), 0)
+
+muhisse_data <- muhisse_data[pruned.tree$tip.label, ]
+data.frame(tree = pruned.tree$tip.label[1:10],
+           data = rownames(muhisse_data)[1:10])
+
+# Run the model 
+# Ensure your tree tips exactly match the 'Species' column in your data frame
+
+fit_3state_muhisse <- MuHiSSE(
+  phy = pruned.tree, 
+  data = muhisse_data, 
+  f = f, 
+  turnover = turnover, 
+  eps = eps, 
+  hidden.states = TRUE, 
+  trans.rate = trans.rates
+)
+
+```
+
+
+```{r, include = FALSE, eval = FALSE}
+
+load("data/fit_3state_muhisse.RData")
+
+
+# Review Results
+# Check parameter estimates and overall model fit
+
+print(fit_3state_muhisse)
+print(fit_3state_muhisse$AICc)
+
+#recon_muhisse <- MarginReconMuHiSSE(
+#  phy = fit_3state_muhisse$phy, 
+#  data = fit_3state_muhisse$data, 
+#  f = fit_3state_muhisse$f, 
+#  pars = fit_3state_muhisse$solution, 
+#  hidden.states = 1,                 
+#  condition.on.survival = TRUE,
+#  n.cores = 4 # Adjust based on your available computer cores
+#)
+
+load("data/recon_muhisse.RData")
+
+recon_muhisse$rates.mat
+
+# 1. Extract the active net diversification rates directly from your screenshot's matrix
+# (Filtering out the zeroed-out placeholder columns from C through H)
+
+states <- c("(00A)", "(01A)", "(10A)", "(00B)", "(01B)", "(10B)")
+model_div.rates   <- recon_muhisse$rates.mat["net.div", states]
+model_spec   <- recon_muhisse$rates.mat["speciation", states]
+
+# 2. Clean up labels for a publication-ready X-axis (removes parentheses)
+clean_labels.div.rates <- gsub("[() ]", "", names(model_div.rates))
+clean_labels.spec <- gsub("[() ]", "", names(model_spec))
+
+```
+
 
 ```{r, eval = FALSE}
 
@@ -522,13 +649,6 @@ plot(mcmc.fit.full$i, mcmc.fit.full$p, type = 'l', xlab = 'Generation',
 ##    res = 360)
 ##pdf('./imgs/figuer2.pdf')
 
-
-
-layout(matrix(c(0, 0, 0, 0, 0, 0,
-                1, 1, 2, 2, 3, 3,
-                1, 1, 2, 2, 3, 3,
-                0, 0, 0, 0, 0, 0), ncol = 6, nrow = 4, byrow = TRUE))
-
 ## computing the mean of our posterior sample,
 ## and we can also compute things like the density
 ## or the 95% HPD interval, just as we would with
@@ -538,9 +658,10 @@ colMeans(mcmc.fit.full)[2:ncol(mcmc.fit.full)]
 
 ## speciation rates
 
-colors <- setNames(c('#39568CFF', 'green4', '#DCE319FF'), c(3, 2, 1))
+colors <- setNames(c('#DCE319FF', 'green4', '#39568CFF'),
+                   colnames(mcmc.fit.full[ , grep('lambda', colnames(mcmc.fit.full))]))
 
-par(mar = c(7, 4, 1, 0), mgp = c(2.5, 1, 0))
+par(mar = c(7, 4, 1, 0.5), mgp = c(2.5, 1, 0))
 plot(NA, ylim = c(0, 30), xlim = c(0, 0.5),
      axes = FALSE, ylab = '', xlab = '')
 grid()
@@ -552,44 +673,187 @@ legend('topright', legend = c(expression(lambda[1]),
                               expression(lambda[2]), expression(lambda[3])),
        fil = colors, bty = 'n')
 
+lambda <- as.data.frame(mcmc.fit.full[ , grep('lambda', colnames(mcmc.fit.full))])
+str(lambda)
+
+df_long <- reshape(data = lambda, direction = "long",
+                   varying = c("lambda1", "lambda2", "lambda3"),
+                   v.names = "lambda",
+                   timevar = "foraging.mode",
+                   times = c("sit and wait", "plastic", "active"))
+
+rownames(df_long) <- 1:nrow(df_long)
+df_long <- df_long[order(df_long$foraging.mode), ]
+str(df_long)
+
+colors <- setNames(c('#39568CFF', 'green4', '#DCE319FF'),
+                   unique(df_long$foraging.mode))
+
+vioplot(lambda ~ foraging.mode, data = df_long,
+        border = NA, method = "jitter", side = "right",
+        col = "white", las = 1, axes = FALSE,
+        xaxt = 'n', yaxt = 'n', ylab = '', xlab = '')
+
+grid(nx = NULL, ny = NULL,
+     col = alpha("lightgray", 0.7), lwd = 1, lty = 2)
+
+par(new = TRUE)
+
+vioplot(lambda ~ foraging.mode, data = df_long,
+        border = NA, method = "jitter", side = "right",
+        col = colors, las = 1,
+        xlab = "Foraging behavior",
+        ylab = expression(Speciation~rates~(lambda)))
+
+segments(x0 = 1,
+         y0 = mean(df_long$lambda[df_long$foraging.mode == "active"]),
+         x1 = 1.38,
+         y1 = mean(df_long$lambda[df_long$foraging.mode == "active"]),
+         lwd = 2, lty = 2, col = "black")
+text(x = 1.45,
+     y = mean(df_long$lambda[df_long$foraging.mode == "active"]),
+     expression(mu))
+
+segments(x0 = 2,
+         y0 = mean(df_long$lambda[df_long$foraging.mode == "plastic"]),
+         x1 = 2.39,
+         y1 = mean(df_long$lambda[df_long$foraging.mode == "plastic"]),
+         lwd = 2, lty = 2, col = "black")
+text(x = 2.45,
+     y = mean(df_long$lambda[df_long$foraging.mode == "plastic"]),
+     expression(mu))
+
+segments(x0 = 3,
+         y0 = mean(df_long$lambda[df_long$foraging.mode == "sit and wait"]),
+         x1 = 3.4,
+         y1 = mean(df_long$lambda[df_long$foraging.mode == "sit and wait"]),
+         lwd = 2, lty = 2, col = "black")
+text(x = 3.45,
+     y = mean(df_long$lambda[df_long$foraging.mode == "sit and wait"]),
+     expression(mu))
+
+
 ## extinction rates
 
-par(mar = c(7, 4, 1, 0), mgp = c(2.5, 1, 0))
-plot(NA, ylim = c(0, 30), xlim = c(0, 0.5), axes = FALSE,
-     ylab = '', xlab = '')
-grid()
+u <- as.data.frame(mcmc.fit.full[ , grep('mu', colnames(mcmc.fit.full))])
+str(u)
+
+df_long_mu <- reshape(data = u, direction = "long",
+                   varying = c("mu1", "mu2", "mu3"),
+                   v.names = "mu",
+                   timevar = "foraging.mode",
+                   times = c("sit and wait", "plastic", "active"))
+
+rownames(df_long_mu) <- 1:nrow(df_long_mu)
+df_long_mu <- df_long_mu[order(df_long_mu$foraging.mode), ]
+str(df_long_mu)
+
+vioplot(mu ~ foraging.mode, data = df_long_mu,
+        border = NA, method = "jitter", side = "right",
+        col = "white", las = 1, axes = FALSE,
+        xaxt = 'n', yaxt = 'n', ylab = '', xlab = '')
+
+grid(nx = NULL, ny = NULL,
+     col = alpha("lightgray", 0.7), lwd = 1, lty = 2)
+
 par(new = TRUE)
-profiles.plot(mcmc.fit.full[ , grep('mu', colnames(mcmc.fit.full))], 
-              col.line = colors, las = 1, legend.pos = NULL,
-              lines.on.top = FALSE)
-legend('topright', legend = c(expression(mu[1]),
-                              expression(mu[2]), expression(mu[3])),
-       fill = colors, bty = 'n')
+
+vioplot(mu ~ foraging.mode, data = df_long_mu,
+        border = NA, method = "jitter", side = "right",
+        col = colors, las = 1,
+        xlab = "Foraging behavior",
+        ylab = expression(Extinction~rates~(mu)))
+
+segments(x0 = 1,
+         y0 = mean(df_long$mu[df_long$foraging.mode == "active"]),
+         x1 = 1.38,
+         y1 = mean(df_long$mu[df_long$foraging.mode == "active"]),
+         lwd = 2, lty = 2, col = "black")
+text(x = 1.45,
+     y = mean(df_long$mu[df_long$foraging.mode == "active"]),
+     expression(mu))
+
+segments(x0 = 2,
+         y0 = mean(df_long$mu[df_long$foraging.mode == "plastic"]),
+         x1 = 2.39,
+         y1 = mean(df_long$mu[df_long$foraging.mode == "plastic"]),
+         lwd = 2, lty = 2, col = "black")
+text(x = 2.45,
+     y = mean(df_long$mu[df_long$foraging.mode == "plastic"]),
+     expression(mu))
+
+segments(x0 = 3,
+         y0 = mean(df_long$mu[df_long$foraging.mode == "sit and wait"]),
+         x1 = 3.4,
+         y1 = mean(df_long$mu[df_long$foraging.mode == "sit and wait"]),
+         lwd = 2, lty = 2, col = "black")
+text(x = 3.45,
+     y = mean(df_long$mu[df_long$foraging.mode == "sit and wait"]),
+     expression(mu))
+
 
 ## net diversification rates
 
 net.div <- mcmc.fit.full[ , grep('lambda', colnames(mcmc.fit.full))]-
     mcmc.fit.full[ , grep('mu', colnames(mcmc.fit.full))]
 
-par(mar = c(7, 4, 1, 0.5), mgp = c(2.5, 1, 0))
-plot(NA, ylim = c(0, 70), xlim = c(0, 0.30),
-     axes = FALSE, ylab = '', xlab = '')
-grid()
-par(new = TRUE)
-profiles.plot(net.div,
-              xlab = 'Net diversification', ylab = 'Probability density',
-              las = 1, legend.pos = NULL,
-              col.line = setNames(colors, colnames(net.div)),
-              lty = 1)
-legend('topright', legend = c(expression(lambda-mu[1]),
-                              expression(lambda-mu[2]),
-                              expression(lambda-mu[3])),
-       fill = colors, bty = 'n')
+net_long <- reshape(data = net.div, direction = "long",
+                   varying = c("lambda1", "lambda2", "lambda3"),
+                   v.names = "lambda",
+                   timevar = "foraging.mode",
+                   times = c("sit and wait", "plastic", "active"))
 
+rownames(net_long) <- 1:nrow(net_long)
+net_long <- net_long[order(net_long$foraging.mode), ]
+str(net_long)
+
+
+vioplot(lambda ~ foraging.mode, data = net_long,
+        border = NA, method = "jitter", side = "right",
+        col = "white", las = 1, axes = FALSE, ylim = c(-0.1, 0.2),
+        xaxt = 'n', yaxt = 'n', ylab = '', xlab = '')
+
+grid(nx = NULL, ny = NULL,
+     col = alpha("lightgray", 0.7), lwd = 1, lty = 2)
+
+par(new = TRUE)
+
+vioplot(lambda ~ foraging.mode, data = net_long,
+        border = NA, method = "jitter", side = "right",
+        col = colors, las = 1, ylim = c(-0.1, 0.2),
+        xlab = "Foraging behavior",
+        ylab = expression(Net~diversification))
+
+segments(x0 = 1,
+         y0 = mean(net_long$lambda[net_long$foraging.mode == "active"]),
+         x1 = 1.38,
+         y1 = mean(net_long$lambda[net_long$foraging.mode == "active"]),
+         lwd = 2, lty = 2, col = "black")
+text(x = 1.45,
+     y = mean(net_long$lambda[net_long$foraging.mode == "active"]),
+     expression(mu))
+
+segments(x0 = 2,
+         y0 = mean(net_long$lambda[net_long$foraging.mode == "plastic"]),
+         x1 = 2.39,
+         y1 = mean(net_long$lambda[net_long$foraging.mode == "plastic"]),
+         lwd = 2, lty = 2, col = "black")
+text(x = 2.45,
+     y = mean(net_long$lambda[net_long$foraging.mode == "plastic"]),
+     expression(mu))
+
+segments(x0 = 3,
+         y0 = mean(net_long$lambda[net_long$foraging.mode == "sit and wait"]),
+         x1 = 3.4,
+         y1 = mean(net_long$lambda[net_long$foraging.mode == "sit and wait"]),
+         lwd = 2, lty = 2, col = "black")
+text(x = 3.45,
+     y = mean(net_long$lambda[net_long$foraging.mode == "sit and wait"]),
+     expression(mu))
 
 ## plotting arc phylogeny for visualization
 
-##png('./imgs/figure2.png', width = 7, height = 7, units = 'in',
+##png('imgs/figure2_revised.png', width = 7, height = 7, units = 'in',
 ##    res = 360)
 ##pdf('./imgs/figuer1.pdf')
 
@@ -600,11 +864,9 @@ layout(matrix(c(1, 1, 1, 1, 1, 1,
                 1, 1, 1, 1, 1, 1,
                 1, 1, 1, 1, 1, 1,
                 1, 1, 1, 1, 1, 1,
-                2, 2, 3, 3, 6, 6,
-                2, 2, 3, 3, 6, 6,
-                4, 4, 5, 5, 6, 6,
-                4, 4, 5, 5, 6, 6), nrow = 10,
-              ncol = 6, byrow = TRUE))
+                2, 2, 2, 3, 3, 3,
+                2, 2, 2, 3, 3, 3,
+                2, 2, 2, 3, 3, 3), nrow = 9, ncol = 6, byrow = TRUE))
 
 
 cols <- setNames(c('#39568CFF', 'green4', '#DCE319FF'),
@@ -662,26 +924,26 @@ mtext('A', at = -550, side = 3, line = 0.5)
 
 ## plotting state transitions
 
-par(mar = c(4, 7, 1, 3), cex = 0.5, mgp = c(2.8, 1, 0),
-    las = 1, col.lab = 'white')
+##par(mar = c(4, 7, 1, 3), cex = 0.5, mgp = c(2.8, 1, 0),
+##    las = 1, col.lab = 'white')
 
-for.density <- density(lizard.maps.sym)
-plot(for.density, ylim = c(0, 0.3),
-     transition = for.density$trans[1],
-     colors = '#39568CFF', xlab = 'Number of transitions',
-     ylab = 'Relative frequency', las = 1, axes = FALSE)
-plot(for.density, ylim = c(0, 0.2),
-     transition = for.density$trans[2],
-     colors = '#39568CFF', xlab = '', las = 1)
+##for.density <- density(lizard.maps.sym)
+##plot(for.density, ylim = c(0, 0.3),
+##     transition = for.density$trans[1],
+##     colors = '#39568CFF', xlab = 'Number of transitions',
+##     ylab = 'Relative frequency', las = 1, axes = FALSE)
+##plot(for.density, ylim = c(0, 0.2),
+##     transition = for.density$trans[2],
+##     colors = '#39568CFF', xlab = '', las = 1)
 ##plot(for.density, ylim = c(0, 0.2),
 ##     transition = for.density$trans[4],
 ##     colors = 'green4', xlab = '', las = 1) 
-plot(for.density, ylim = c(0, 0.2),
-     transition = for.density$trans[6],
-     colors = '#DCE319FF', xlab = '', las = 1) 
-plot(for.density, ylim = c(0, 0.2),
-     transition = for.density$trans[5],
-     colors = '#DCE319FF', xlab = '', las = 1) 
+##plot(for.density, ylim = c(0, 0.2),
+##     transition = for.density$trans[6],
+##     colors = '#DCE319FF', xlab = '', las = 1) 
+##plot(for.density, ylim = c(0, 0.2),
+##     transition = for.density$trans[5],
+##     colors = '#DCE319FF', xlab = '', las = 1) 
 #plot(for.density, ylim = c(0, 0.2),
 #     transition = for.density$trans[3],
 #     colors = 'green4', xlab = '', las = 1) 
@@ -691,26 +953,207 @@ plot(for.density, ylim = c(0, 0.2),
 
 ## plotting state transitions
 
-mtext('Relative frequency', at = -203, line = -4, las = 2)
-mtext('B', at = -203, line = 17, las = 1)
-mtext('Number of transitions', at = -45, line = -12.7, las = 1)
+##mtext('Relative frequency', at = -203, line = -4, las = 2)
+##mtext('B', at = -203, line = 17, las = 1)
+##mtext('Number of transitions', at = -45, line = -12.7, las = 1)
 
-par(mar = c(5, 3.9, 1, 0.5), col.lab = 'black', cex.lab = 1.4)
-plot(NA, ylim = c(0, 70), xlim = c(0, 0.30),
-     axes = FALSE, ylab = '', xlab = '')
+
+## Speciation
+
+##par(mar = c(4, 6, 0, 1), mgp = c(2.5, 1, 0))
+
+##vioplot(lambda ~ foraging.mode, data = df_long,
+##        border = NA, method = "jitter", side = "right",
+##        col = "white", las = 1, axes = FALSE,
+##        xaxt = 'n', yaxt = 'n', ylab = '', xlab = '')
+
+##grid(nx = NULL, ny = NULL,
+##     col = alpha("lightgray", 0.7), lwd = 1, lty = 2)
+
+##par(new = TRUE)
+
+##vioplot(lambda ~ foraging.mode, data = df_long,
+##        border = NA, method = "jitter", side = "right",
+##        col = cols, las = 1,
+##        xlab = "Foraging behavior",
+##        ylab = expression(Speciation~rates~(lambda)))
+
+##stripchart(lambda ~ foraging.mode, data = df_long, vertical = TRUE,
+##           method = "jitter", add = TRUE, pch = 20,
+##           col = alpha(cols, 0.1),
+##           cex = 1.3)
+
+##segments(x0 = 1,
+##         y0 = mean(df_long$lambda[df_long$foraging.mode == "active"]),
+##         x1 = 1.38,
+##         y1 = mean(df_long$lambda[df_long$foraging.mode == "active"]),
+##         lwd = 2, lty = 2, col = "black")
+##text(x = 1.45,
+##     y = mean(df_long$lambda[df_long$foraging.mode == "active"]),
+##     expression(mu))
+
+##segments(x0 = 2,
+##         y0 = mean(df_long$lambda[df_long$foraging.mode == "plastic"]),
+##         x1 = 2.39,
+##         y1 = mean(df_long$lambda[df_long$foraging.mode == "plastic"]),
+##         lwd = 2, lty = 2, col = "black")
+##text(x = 2.45,
+##     y = mean(df_long$lambda[df_long$foraging.mode == "plastic"]),
+##     expression(mu))
+
+##segments(x0 = 3,
+##         y0 = mean(df_long$lambda[df_long$foraging.mode == "sit and wait"]),
+##         x1 = 3.4,
+##         y1 = mean(df_long$lambda[df_long$foraging.mode == "sit and wait"]),
+##         lwd = 2, lty = 2, col = "black")
+##text(x = 3.45,
+##     y = mean(df_long$lambda[df_long$foraging.mode == "sit and wait"]),
+##     expression(mu))
+
+
+# 3. Create a clean, formal parameter plot using base R graphics
+
+# Generate a barplot representing the exact maximum likelihood estimates
+
+par(mar = c(4, 5, 0.5, 2))
+
+mp <- barplot(
+  model_spec,
+  names.arg = clean_labels.spec,
+  col = alpha(cols, 0.8),
+  angle = 45,
+  las = 2,
+  ylab = "",
+  xlab = "",
+  ylim = c(min(model_spec), max(model_spec) + 0.1),
+  axes = FALSE,
+  xaxt = "n",
+  border = FALSE
+)
+
 grid()
 par(new = TRUE)
-profiles.plot(net.div,
-              xlab = 'Net diversification', ylab = 'Probability density',
-              las = 1, legend.pos = NULL,
-              col.line = setNames(colors, colnames(net.div)),
-              lty = 1)
-legend('topleft', legend = c(expression(lambda[1]-mu[1]),
-                              expression(lambda[2]-mu[2]),
-                              expression(lambda[3]-mu[3])),
-       fill = colors, bty = 'n', cex = 1.4)
 
-mtext('C', at = -0.36, side = 3, line = 2.1)
+barplot(
+  model_spec,
+  names.arg = clean_labels.spec,
+  col = cols,
+  density = c(NA, NA, NA, 30, 30, 30), # Adds shading lines to visually distinguish Environment B
+  angle = 45,
+  las = 2,
+  ylab = expression(paste("Speciation rate")~(mu)),
+  xlab = "",
+  ylim = c(min(model_spec), max(model_spec) + 0.1),
+  xaxt = "n",
+  border = FALSE
+)
+
+axis(1, at = mp, c("active-A", "plastic-A", "sit-and-wait-A",
+                   "active-B", "plastic-B", "sit-and-wait-B"), cex.axis = 0.6)
+
+box()
+
+mtext('B', at = -1.5, line = 1.2, las = 1)
+
+
+## Net diversification
+
+##par(mar = c(4, 6, 0, 1), mgp = c(2.5, 1, 0))
+
+##vioplot(lambda ~ foraging.mode, data = net_long,
+##        border = NA, method = "jitter", side = "right",
+##        col = "white", las = 1, axes = FALSE,
+##        ylim = c(-0.1, 0.2),
+##        xaxt = 'n', yaxt = 'n', ylab = '', xlab = '')
+
+##grid(nx = NULL, ny = NULL,
+##     col = alpha("lightgray", 0.7), lwd = 1, lty = 2)
+
+##par(new = TRUE)
+
+##vioplot(lambda ~ foraging.mode, data = net_long,
+##        border = NA, method = "jitter", side = "right",
+##        col = cols, las = 1,
+##        xlab = "Foraging behavior",
+##        ylim = c(-0.1, 0.2),
+##        ylab = expression(Net~diversification))
+
+##segments(x0 = 1,
+##         y0 = mean(net_long$lambda[net_long$foraging.mode == "active"]),
+##         x1 = 1.38,
+##         y1 = mean(net_long$lambda[net_long$foraging.mode == "active"]),
+##         lwd = 2, lty = 2, col = "black")
+##text(x = 1.45,
+##     y = mean(net_long$lambda[net_long$foraging.mode == "active"]),
+##     expression(mu))
+
+##segments(x0 = 2,
+##         y0 = mean(net_long$lambda[net_long$foraging.mode == "plastic"]),
+##         x1 = 2.39,
+##         y1 = mean(net_long$lambda[net_long$foraging.mode == "plastic"]),
+##         lwd = 2, lty = 2, col = "black")
+##text(x = 2.45,
+##     y = mean(net_long$lambda[net_long$foraging.mode == "plastic"]),
+##     expression(mu))
+
+##segments(x0 = 3,
+##         y0 = mean(net_long$lambda[net_long$foraging.mode == "sit and wait"]),
+##         x1 = 3.4,
+##         y1 = mean(net_long$lambda[net_long$foraging.mode == "sit and wait"]),
+##         lwd = 2, lty = 2, col = "black")
+##text(x = 3.45,
+##     y = mean(net_long$lambda[net_long$foraging.mode == "sit and wait"]),
+##     expression(mu))
+
+##mtext('C', at = -0.3, side = 3, line = 2)
+
+
+# 3. Create a clean, formal parameter plot using base R graphics
+
+# Generate a barplot representing the exact maximum likelihood estimates
+
+par(mar = c(4, 5, 0.5, 2))
+
+mp <- barplot(
+  model_div.rates,
+  names.arg = clean_labels.div.rates,
+  col = alpha(cols, 0.8),
+  angle = 45,
+  las = 2,
+  ylab = "",
+  xlab = "",
+  ylim = c(min(model_div.rates) - 0.1, max(model_div.rates) + 0.1),
+  axes = FALSE,
+  xaxt = "n",
+  border = FALSE,
+)
+
+grid()
+par(new = TRUE)
+
+barplot(
+  model_div.rates,
+  names.arg = clean_labels.div.rates,
+  col = cols,
+  density = c(NA, NA, NA, 30, 30, 30), # Adds shading lines to visually distinguish Environment B
+  angle = 45,
+  las = 2,
+  ylab = expression(paste("Net diversification rate")~(r)),
+  xlab = "",
+  ylim = c(min(model_div.rates) - 0.1, max(model_div.rates) + 0.1),
+  xaxt = "n",
+  border = FALSE
+)
+
+axis(1, at = mp, c("active-A", "plastic-A", "sit-and-wait-A",
+                   "active-B", "plastic-B", "sit-and-wait-B"), cex.axis = 0.6)
+
+box()
+
+# Add a clean baseline line at y = 0
+abline(h = 0, col = "black", lty = 2)
+
+mtext('C', at = -1.5, line = 1.2, las = 1)
 
 ##dev.off()
 
@@ -719,7 +1162,7 @@ mtext('C', at = -0.36, side = 3, line = 2.1)
 
 ```
 
-![](imgs/figure2.png)
+![](imgs/figure2_revised.png)
 
 
 ```{r}
@@ -951,11 +1394,12 @@ pruned.mass.range <- subset(mass.range,
                             subset = rownames(mass.range) %in% tree.mass.range$tip,
                             select = names(mass.range))
 name.check(tree.mass.range, pruned.mass.range)
+colnames(pruned.mass.range)[14] <- "body.mass"
 head(pruned.mass.range[c(12, 14, 29)])
 
 ```
 
-```{r}
+```{r, eval = FALSE}
 
 ## looking at body size landscape before running PGLS
 
@@ -968,7 +1412,7 @@ MEvar <- 0.1
 
 ## data of body mass
 
-dat <- setNames(pruned.mass.range$'Maximum body mass',
+dat <- setNames(pruned.mass.range$body.mass,
                 rownames(pruned.mass.range))
 dat <- dat + rnorm(length(dat), 0, sqrt(MEvar))
 
@@ -1030,11 +1474,11 @@ chainOU <- set.burnin(chainOU, 0.3)
 
 ```{r, include = FALSE}
 
-load('mcmc_modelOU-10e4.RData')
+load('data/mcmc_modelOU-10e4.RData')
 
 ```
 
-```{r}
+```{r, eval = FALSE}
 
 ## foraging tree
 
@@ -1068,10 +1512,10 @@ phenogram(bt, dat, ftype = 'off',
 segments(x0 = -10, y0 = 3.8, x1 = 279,
          y1 = 3.8, lty = 2,
          col = alpha('black', 0.5))
-axis(2, seq(0, max(pruned.mass.range$'Maximum body mass'),
+axis(2, seq(0, max(pruned.mass.range$body.mass),
             by = 2),
      las = 1)
-mtext(expression('Maximum body mass'~log[10]~(g)), side = 2, line = 2.5)
+mtext(expression(body.mass~log[10]~(g)), side = 2, line = 2.5)
 axis(1, at = round(seq(0, max(nodeHeights(bt)),
                        length.out = 4), 0),
      label = round(seq(max(nodeHeights(bt)), 0,
@@ -1112,7 +1556,7 @@ legend("topright", legend = names(cols.bt), pch = 21,
 
 ```
 
-```{r}
+```{r, eval = FALSE}
 
 
 ## basic boxplot to look at body size among
@@ -1120,7 +1564,7 @@ legend("topright", legend = names(cols.bt), pch = 21,
 
 par(mgp = c(2.5, 1, 0))
 
-vioplot(pruned.mass.range$'Maximum body mass' ~
+vioplot(pruned.mass.range$body.mass ~
             pruned.mass.range$Foraging.mode, border = NA,
         method = "jitter", side = "right", col = "white",
         las = 1, axes = FALSE, xaxt = 'n', yaxt = 'n',
@@ -1131,41 +1575,45 @@ grid(nx = NULL, ny = NULL, col = alpha("lightgray", 0.7),
 
 par(new = TRUE)
 
-vioplot(pruned.mass.range$'Maximum body mass' ~
+vioplot(pruned.mass.range$body.mass ~
             pruned.mass.range$Foraging.mode, border = NA,
         method = "jitter", side = "right",
         ylab = expression(paste("Maximum body mass")~log[10]~(g)),
         xlab = "Foraging behavior", col = alpha(cols.bt, 0.5), las = 1)
 
 segments(x0 = 1,
-         y0 = mean(pruned.mass.range$'Maximum body mass'[pruned.mass.range$Foraging.mode == "active"]),
+         y0 = mean(pruned.mass.range$body.mass[pruned.mass.range$Foraging.mode == "active"]),
          x1 = 1.38,
-         y1 = mean(pruned.mass.range$'Maximum body mass'[pruned.mass.range$Foraging.mode == "active"]),
+         y1 = mean(pruned.mass.range$body.mass[pruned.mass.range$Foraging.mode == "active"]),
          lwd = 2, lty = 2, col = "black")
 text(x = 1.45,
-     y = mean(pruned.mass.range$'Maximum body mass'[pruned.mass.range$Foraging.mode == "active"]),
+     y = mean(pruned.mass.range$body.mass[pruned.mass.range$Foraging.mode == "active"]),
      expression(mu))
 
 segments(x0 = 2,
-         y0 = mean(pruned.mass.range$'Maximum body mass'[pruned.mass.range$Foraging.mode == "plastic"]),
+         y0 = mean(pruned.mass.range$body.mass[pruned.mass.range$Foraging.mode == "plastic"]),
          x1 = 2.39,
-         y1 = mean(pruned.mass.range$'Maximum body mass'[pruned.mass.range$Foraging.mode == "plastic"]),
+         y1 = mean(pruned.mass.range$body.mass[pruned.mass.range$Foraging.mode == "plastic"]),
          lwd = 2, lty = 2, col = "black")
 text(x = 2.45,
-     y = mean(pruned.mass.range$'Maximum body mass'[pruned.mass.range$Foraging.mode == "plastic"]),
+     y = mean(pruned.mass.range$body.mass[pruned.mass.range$Foraging.mode == "plastic"]),
      expression(mu))
 
 segments(x0 = 3,
-         y0 = mean(pruned.mass.range$'Maximum body mass'[pruned.mass.range$Foraging.mode == "sit-and-wait"]),
+         y0 = mean(pruned.mass.range$body.mass[pruned.mass.range$Foraging.mode == "sit-and-wait"]),
          x1 = 3.4,
-         y1 = mean(pruned.mass.range$'Maximum body mass'[pruned.mass.range$Foraging.mode == "sit-and-wait"]),
+         y1 = mean(pruned.mass.range$body.mass[pruned.mass.range$Foraging.mode == "sit-and-wait"]),
          lwd = 2, lty = 2, col = "black")
 text(x = 3.45,
-     y = mean(pruned.mass.range$'Maximum body mass'[pruned.mass.range$Foraging.mode == "sit-and-wait"]),
+     y = mean(pruned.mass.range$body.mass[pruned.mass.range$Foraging.mode == "sit-and-wait"]),
      expression(mu))
 
+```
 
-names(pruned.mass.range)[14] <- 'body.mass'
+
+```{r}
+
+##names(pruned.mass.range)[14] <- 'body.mass'
 pruned.mass.range$Species <- as.factor(pruned.mass.range$Species)
 pruned.mass.range$Foraging.mode <- as.factor(pruned.mass.range$Foraging.mode)
 
@@ -1179,7 +1627,7 @@ summary(bd.size.model)
 ```
 
 
-```{r}
+```{r, eval = FALSE}
 
 
 ## Checking homogeneity of variance
@@ -1254,7 +1702,28 @@ range.models <- anova(range.model, range.model2, range.model3, range.model4)
 
 round(aicw(setNames(range.models$AIC,
               rownames(range.models))), 3)
-summary(range.model2)
+summary(range.model)
+
+```
+
+
+```{r, eval = FALSE}
+
+## Range corrected for body mass
+
+names(pruned.mass.range)
+pruned.mass.range$range_corr <- residuals(gls(range ~ body.mass,
+                                              correlation = corBrownian(phy = tree.mass.range,
+                                                                        form = ~Species),
+                                              data = pruned.mass.range, method = "ML"))
+
+range.model <- gls(range_corr ~ Foraging.mode,
+                     correlation =
+                         corBrownian(phy = tree.mass.range,
+                                     form = ~Species),
+                     data = pruned.mass.range, method = "ML")
+
+summary(range.model)
 
 ```
 
@@ -1272,18 +1741,18 @@ cols <- c('#39568CFF', 'green4', '#DCE319FF')
 dim(pruned.mass.range)
 pred.mod <- data.frame(body.mass = seq(min(pruned.mass.range$body.mass),
                                        max(pruned.mass.range$body.mass),
-                                       len = 762),
+                                       len = 983),
                        Foraging.mode = pruned.mass.range$Foraging.mode,
                        row.names = rownames(pruned.mass.range))
-pred.mod$range <- predict(range.model2, pred.mod,
+pred.mod$range <- predict(range.model, pred.mod,
                           type = 'response', se = TRUE)$fit
-pred.mod$se <- predict(range.model2, pred.mod,
+pred.mod$se <- predict(range.model, pred.mod,
                        type = 'response', se = TRUE)$se.fit
 head(pred.mod)
 
-active <- pred.mod[pruned.mass.range$Foraging.mode == 'active', ]
-plastic <- pred.mod[pruned.mass.range$Foraging.mode == 'plastic', ]
-sit.and.wait <- pred.mod[pruned.mass.range$Foraging.mode == 'sit-and-wait', ]
+active <- pred.mod[pred.mod$Foraging.mode == 'active', ]
+plastic <- pred.mod[pred.mod$Foraging.mode == 'plastic', ]
+sit.and.wait <- pred.mod[pred.mod$Foraging.mode == 'sit-and-wait', ]
 
 par(mgp = c(2.5, 1, 0))
 
@@ -1337,14 +1806,14 @@ layout(matrix(c(0, 0, 0, 0,
               ncol = 4, byrow = TRUE))
 
 par(mgp = c(3, 1, 0))
-plot(fitted(range.model2), resid(range.model2),
+plot(fitted(range.model), resid(range.model),
      col = "grey", pch = 20, las = 1, xaxt = 'n',
      yaxt = 'n', ylab = '', xlab = '')
 
 grid()
 
 par(new = TRUE)
-plot(fitted(range.model2), resid(range.model2),
+plot(fitted(range.model), resid(range.model),
      col = "grey", pch = 20, xlab = "Fitted",
      ylab = "Residual", main = "Fitted versus Residuals",
      las = 1)
@@ -1354,15 +1823,15 @@ abline(h = 0, col = "darkorange", lwd = 2)
 
 ## Checking normality
 
-qqnorm(resid(range.model2), col = "darkgrey",
+qqnorm(resid(range.model), col = "darkgrey",
        type = 'n', las = 1, main = '', xaxt = 'n',
        yaxt = 'n', xlab = '', ylab = '')
 
 grid()
 
 par(new = TRUE)
-qqnorm(resid(range.model2), col = "darkgrey", las = 1)
-qqline(resid(range.model2), col = "dodgerblue", lwd = 2)
+qqnorm(resid(range.model), col = "darkgrey", las = 1)
+qqline(resid(range.model), col = "dodgerblue", lwd = 2)
 
 ```
 
@@ -1474,9 +1943,9 @@ cols <- c('#39568CFF', 'green4', '#DCE319FF')
 
 dim(data.rep.out)
 pred.mod <- data.frame(body.mass = seq(min(data.rep.out$body.mass),
-                                       max(data.rep.out$body.mass), len = 251),
+                                       max(data.rep.out$body.mass), len = 290),
                        range = seq(min(data.rep.out$range), max(data.rep.out$range),
-                                   len = 251), Foraging.mode = data.rep.out$Foraging.mode,
+                                   len = 290), Foraging.mode = data.rep.out$Foraging.mode,
                        row.names = rownames(data.rep.out))
 pred.mod$rep.out <- predict(repro.model2, pred.mod,
                             type = 'response', se = TRUE)$fit
@@ -1484,9 +1953,9 @@ pred.mod$se <- predict(repro.model2, pred.mod,
                        type = 'response', se = TRUE)$se.fit
 head(pred.mod)
 
-active <- pred.mod[data.rep.out$Foraging.mode == 'active', ]
-plastic <- pred.mod[data.rep.out$Foraging.mode == 'plastic', ]
-sit.and.wait <- pred.mod[data.rep.out$Foraging.mode == 'sit-and-wait', ]
+active <- pred.mod[pred.mod$Foraging.mode == 'active', ]
+plastic <- pred.mod[pred.mod$Foraging.mode == 'plastic', ]
+sit.and.wait <- pred.mod[pred.mod$Foraging.mode == 'sit-and-wait', ]
 
 layout(matrix(c(0, 0, 0, 0,
                 1, 1, 2, 2,
@@ -1551,7 +2020,7 @@ plot(repro.output ~ range, data = data.rep.out,
      pch = 21, bg = cols[as.numeric(as.factor(data.rep.out$Foraging.mode))],
      col = 'black', las = 1,
      xlab = expression("Area of geographic range"~log[10]~(km^2)),
-     ylab = expression("Clutch size"~x~"clutches per year"),
+     ylab = expression(Log[10]~"clutch size"~x~"clutches per year"),
      type = 'p')
 
 lines(active$rep.out ~ active$range,
@@ -1603,30 +2072,46 @@ names(data.lifetime.rep.out)[14] <- 'body.mass'
 names(data.lifetime.rep.out)[29] <- 'range'
 head(data.lifetime.rep.out[ , c(12, 14, 29, 31)])
 
+
+data.lifetime.rep.out$corr.lifetime.repro.output <- residuals(lm(lifetime.repro.output ~ body.mass,
+                                                                 data = data.lifetime.rep.out))
+head(data.lifetime.rep.out[ , c(12, 14, 29, 31, 32)])
+
+
 ## fitting models
 
-lifetime.repro.model1 <- gls(lifetime.repro.output ~ Foraging.mode*body.mass,
+lifetime.repro.model1 <- gls(lifetime.repro.output ~ Foraging.mode*body.mass*range,
+                     correlation =
+                         corBrownian(phy = tree.life.rep,
+                                     form = ~Species),
+                     data = data.lifetime.rep.out, method = "ML")
+
+lifetime.repro.model2 <- gls(lifetime.repro.output ~ Foraging.mode*body.mass + range,
+                     correlation =
+                         corBrownian(phy = tree.life.rep,
+                                     form = ~Species),
+                     data = data.lifetime.rep.out, method = "ML")
+
+lifetime.repro.model3 <- gls(lifetime.repro.output ~ Foraging.mode*range + body.mass,
                      correlation =
                          corBrownian(phy = tree.life.rep,
                                      form = ~Species),
                      data = data.lifetime.rep.out, method = "ML")
 
 
-lifetime.repro.model2 <- gls(lifetime.repro.output ~ Foraging.mode + body.mass, 
+lifetime.repro.model4 <- gls(lifetime.repro.output ~ Foraging.mode + range + body.mass,
                      correlation =
                          corBrownian(phy = tree.life.rep,
                                      form = ~Species),
                      data = data.lifetime.rep.out, method = "ML")
 
-
-lifetime.repro.model3 <- gls(lifetime.repro.output ~ Foraging.mode,
+lifetime.repro.model5 <- gls(lifetime.repro.output ~ Foraging.mode + body.mass,
                      correlation =
                          corBrownian(phy = tree.life.rep,
                                      form = ~Species),
                      data = data.lifetime.rep.out, method = "ML")
 
-
-lifetime.repro.model4 <- gls(lifetime.repro.output ~ body.mass,
+lifetime.repro.model6 <- gls(lifetime.repro.output ~ Foraging.mode + range,
                      correlation =
                          corBrownian(phy = tree.life.rep,
                                      form = ~Species),
@@ -1634,17 +2119,60 @@ lifetime.repro.model4 <- gls(lifetime.repro.output ~ body.mass,
 
 
 lifetime.repro.models <- anova(lifetime.repro.model1, lifetime.repro.model2,
-                               lifetime.repro.model3, lifetime.repro.model4)
+                               lifetime.repro.model3, lifetime.repro.model4,
+                               lifetime.repro.model5, lifetime.repro.model6)
+
 lifetime.repro.models
 
 round(aicw(setNames(lifetime.repro.models$AIC,
               rownames(lifetime.repro.models))), 3)
 
-summary(lifetime.repro.model1)
+summary(lifetime.repro.model2)
+
+
+
+## fitting models with corrected lifetime reproductive output
+
+corr.lifetime.repro.model1 <- gls(corr.lifetime.repro.output ~ Foraging.mode*range,
+                     correlation =
+                         corBrownian(phy = tree.life.rep,
+                                     form = ~Species),
+                     data = data.lifetime.rep.out, method = "ML")
+
+
+corr.lifetime.repro.model2 <- gls(corr.lifetime.repro.output ~ Foraging.mode + range,
+                     correlation =
+                         corBrownian(phy = tree.life.rep,
+                                     form = ~Species),
+                     data = data.lifetime.rep.out, method = "ML")
+
+
+corr.lifetime.repro.model3 <- gls(corr.lifetime.repro.output ~ Foraging.mode,
+                     correlation =
+                         corBrownian(phy = tree.life.rep,
+                                     form = ~Species),
+                     data = data.lifetime.rep.out, method = "ML")
+
+corr.lifetime.repro.model4 <- gls(corr.lifetime.repro.output ~ range,
+                     correlation =
+                         corBrownian(phy = tree.life.rep,
+                                     form = ~Species),
+                     data = data.lifetime.rep.out, method = "ML")
+
+
+corr.lifetime.repro.models <- anova(corr.lifetime.repro.model1, corr.lifetime.repro.model2,
+                               corr.lifetime.repro.model3, corr.lifetime.repro.model4)
+corr.lifetime.repro.models
+
+round(aicw(setNames(corr.lifetime.repro.models$AIC,
+              rownames(corr.lifetime.repro.models))), 3)
+
+summary(corr.lifetime.repro.model2)
+anova(corr.lifetime.repro.model2)
 
 ```
 
-```{r}
+```{r, eval = FALSE}
 
 ## plotting results of the model
 
@@ -1652,7 +2180,9 @@ cols <- c('#39568CFF', 'green4', '#DCE319FF')
 
 dim(data.lifetime.rep.out)
 pred.mod <- data.frame(body.mass = seq(min(data.lifetime.rep.out$body.mass),
-                                       max(data.lifetime.rep.out$body.mass), len = 246),
+                                       max(data.lifetime.rep.out$body.mass), len = 284),
+                       range = seq(min(data.lifetime.rep.out$range),
+                                   max(data.lifetime.rep.out$range), len = 284),
                        Foraging.mode = data.lifetime.rep.out$Foraging.mode,
                        row.names = rownames(data.lifetime.rep.out))
 pred.mod$lifetime.rep.out <- predict(lifetime.repro.model1, pred.mod,
@@ -1661,9 +2191,9 @@ pred.mod$se <- predict(lifetime.repro.model1, pred.mod,
                        type = 'response', se = TRUE)$se.fit
 head(pred.mod)
 
-active <- pred.mod[data.lifetime.rep.out$Foraging.mode == 'active', ]
-plastic <- pred.mod[data.lifetime.rep.out$Foraging.mode == 'plastic', ]
-sit.and.wait <- pred.mod[data.lifetime.rep.out$Foraging.mode == 'sit-and-wait', ]
+active <- pred.mod[pred.mod$Foraging.mode == 'active', ]
+plastic <- pred.mod[pred.mod$Foraging.mode == 'plastic', ]
+sit.and.wait <- pred.mod[pred.mod$Foraging.mode == 'sit-and-wait', ]
 
 
 ##png('./imgs/figure3.png', width = 7, height = 7, units = 'in',
@@ -1713,6 +2243,160 @@ mtext('B', side = 2, at = 3.8, line = 3.2, las = 2)
 
 ```{r}
 
+## plotting results of the model of corrected lifetime reproductive output
+
+cols <- c('#39568CFF', 'green4', '#DCE319FF')
+
+dim(data.lifetime.rep.out)
+pred.mod <- data.frame(range = seq(min(data.lifetime.rep.out$range),
+                                   max(data.lifetime.rep.out$range), len = 284),
+                       Foraging.mode = data.lifetime.rep.out$Foraging.mode,
+                       row.names = rownames(data.lifetime.rep.out))
+pred.mod$corr.lifetime.rep.out <- predict(corr.lifetime.repro.model2, pred.mod,
+                            type = 'response', se = TRUE)$fit
+pred.mod$se <- predict(corr.lifetime.repro.model2, pred.mod,
+                       type = 'response', se = TRUE)$se.fit
+head(pred.mod)
+
+active <- pred.mod[pred.mod$Foraging.mode == 'active', ]
+plastic <- pred.mod[pred.mod$Foraging.mode == 'plastic', ]
+sit.and.wait <- pred.mod[pred.mod$Foraging.mode == 'sit-and-wait', ]
+
+
+##png('./imgs/figure4_revised.png', width = 7, height = 7, units = 'in',
+##    res = 360)
+##pdf('./imgs/figuer3.pdf')
+
+
+layout(matrix(c(0, 1, 1, 0,
+                0, 1, 1, 0,
+                0, 2, 2, 0,
+                0, 2, 2, 0), nrow = 4, ncol = 4, byrow = TRUE))
+
+
+##par(mar = c(4, 6.5, 0.5, 2))
+
+plot(NA, xlim = range(times), ylim = c(0, max(log1p(lineages))),
+     ylab = expression("Number of lineages"~(log[1+p])), bty = "n", las = 1,
+     xlab = "Time (mya)", axes = FALSE, cex.lab = 1)
+grid()
+
+## add lineages through time for each type
+
+lines(times, log1p(lineages[ , 1]), type = "s",
+      lwd = 3, col = '#39568CFF')
+lines(times, log1p(lineages[ , 2]), type = "s",
+      col = 'green4', lwd = 3)
+lines(times, log1p(lineages[ , 3]), type = "s",
+      col = '#DCE319FF', lwd = 4)
+
+legend("topleft", levels(as.factor(map.spp)),
+       pch = 22, pt.bg = c('#39568CFF', 'green4', '#DCE319FF'),
+       pt.cex = 1.2 , cex = .8, bty = "n")
+
+axis(1, at = round(seq(0, max(nodeHeights(lizard.maps.sym[[idx]])),
+                       length.out = 4), 0),
+     label = round(seq(max(nodeHeights(lizard.maps.sym[[idx]])), 0,
+                       length.out = 4), 0), cex.axis = 0.8, cex.lab = .9)
+axis(2, las = 1, cex.axis = 0.7)
+mtext('A', side = 2, at = 7, las = 2, line = 3.2)
+box()
+
+
+
+#cols.bt <- setNames(c('#39568CFF', 'green4', '#DCE319FF'),
+#                    c('active', 'plastic', 'sit-and-wait'))
+
+#par(cex.lab = .8)
+#vioplot(corr.lifetime.repro.output ~ Foraging.mode, data = data.lifetime.rep.out,
+#        border = NA,
+#        method = "jitter", side = "right", col = "white",
+#        las = 1, axes = FALSE, xaxt = 'n', yaxt = 'n',
+#        ylab = '', xlab = '')
+
+#grid(nx = NULL, ny = NULL, col = alpha("lightgray", 0.7),
+#     lwd = 1, lty = 2)
+
+#par(new = TRUE)
+
+#vioplot(corr.lifetime.repro.output ~ Foraging.mode, data = data.lifetime.rep.out,
+#        border = NA,
+#        method = "jitter", side = "right",
+#        ylab = "clutch size x clutches per year x longevity \n (log10)",
+#        xlab = "Foraging behavior", col = alpha(cols.bt, 0.5), las = 1)
+
+#segments(x0 = 1,
+#         y0 = mean(pred.mod$corr.lifetime.rep.out[pred.mod$Foraging.mode == "active"]),
+#         x1 = 1.38,
+#         y1 = mean(pred.mod$corr.lifetime.rep.out[pred.mod$Foraging.mode == "active"]),
+#         lwd = 2, lty = 2, col = "black")
+#text(x = 1.45,
+#     y = mean(pred.mod$corr.lifetime.rep.out[pred.mod$Foraging.mode == "active"]),
+#     expression(mu))
+
+#segments(x0 = 2,
+#         y0 = mean(pred.mod$corr.lifetime.rep.out[pred.mod$Foraging.mode == "plastic"]),
+#         x1 = 2.35,
+#         y1 = mean(pred.mod$corr.lifetime.rep.out[pred.mod$Foraging.mode == "plastic"]),
+#         lwd = 2, lty = 2, col = "black")
+#text(x = 2.45,
+#     y = mean(pred.mod$corr.lifetime.rep.out[pred.mod$Foraging.mode == "plastic"]),
+#     expression(mu))
+
+#segments(x0 = 3,
+#         y0 = mean(pred.mod$corr.lifetime.rep.out[pred.mod$Foraging.mode == "sit-and-wait"]),
+#         x1 = 3.3,
+#         y1 = mean(pred.mod$corr.lifetime.rep.out[pred.mod$Foraging.mode == "sit-and-wait"]),
+#         lwd = 2, lty = 2, col = "black")
+#text(x = 3.45,
+#     y = mean(pred.mod$corr.lifetime.rep.out[pred.mod$Foraging.mode == "sit-and-wait"]),
+#     expression(mu))
+
+#mtext('B', side = 2, at = 1.2, las = 2, line = 3.5)
+
+par(mgp = c(2.3, 1, 0))
+
+plot(corr.lifetime.repro.output ~ range, data = data.lifetime.rep.out,
+     pch = 21,
+     bg = cols[as.numeric(as.factor(data.lifetime.rep.out$Foraging.mode))],
+     las = 1, xaxt = 'n', yaxt = 'n', xlab = '', ylab = '',
+     type = 'n', axes = FALSE)
+
+grid(nx = NULL, ny = NULL, col = "lightgray", lwd = 1)
+par(new = TRUE)
+
+plot(corr.lifetime.repro.output ~ range, data = data.lifetime.rep.out,
+     pch = 21,
+     bg = cols[as.numeric(as.factor(data.lifetime.rep.out$Foraging.mode))],
+     col = 'black', las = 1, xlab = expression("Range area"~log[10]~(Km^2)),
+     ylab = "clutch size x clutches per year x longevity \n (log10)",
+     type = 'p', cex.axis = .9, cex.lab = 1)
+
+lines(active$corr.lifetime.rep.out ~ active$range,
+      data = active, lwd = 2.5, col = '#39568CFF')
+
+lines(plastic$corr.lifetime.rep.out ~ plastic$range,
+      data = plastic, lwd = 2.5, col = 'green4')
+
+lines(sit.and.wait$corr.lifetime.rep.out ~ sit.and.wait$range,
+      data = sit.and.wait, lwd = 2.5, col = '#DCE319FF')
+
+legend('topleft',
+       legend = c('active', 'plastic',
+                  'sit-and-wait'), pch = 21,
+       pt.bg = c('#39568CFF', 'green4', '#DCE319FF'),
+       col = c('#39568CFF', 'green4', '#DCE319FF'), lwd = 1,
+       bty = 'n', cex = 0.8)
+mtext('B', side = 2, at = 1.3, line = 3.4, las = 2)
+
+##dev.off()
+
+```
+
+
+
+```{r, eval = FALSE, include = FALSE}
+
 ## Checking homogeneity of variance
 
 
@@ -1750,7 +2434,10 @@ par(new = TRUE)
 qqnorm(resid(repro.model2), col = "darkgrey", las = 1)
 qqline(resid(repro.model2), col = "dodgerblue", lwd = 2)
 
+```
 
+
+```{r}
 
 ## setting up the data for modeling the body temperature
 
@@ -1881,7 +2568,7 @@ tb.models <- anova(tb.model1, tb.model2,
 
 round(aicw(setNames(tb.models$AIC,
               rownames(tb.models))), 3)
-summary(tb.model9)
+summary(tb.model14)
 
 ```
 
@@ -1899,18 +2586,18 @@ cols <- c('#39568CFF', 'green4', '#DCE319FF')
 dim(data.tb)
 pred.mod <- data.frame(range = seq(min(data.tb$range),
                                    max(data.tb$range),
-                                   len = 214),
+                                   len = 230),
                        Foraging.mode = data.tb$Foraging.mode,
                        row.names = rownames(data.tb))
-pred.mod$mean.tb <- predict(tb.model9, pred.mod,
+pred.mod$mean.tb <- predict(tb.model14, pred.mod,
                             type = 'response', se = TRUE)$fit
-pred.mod$se <- predict(tb.model9, pred.mod,
+pred.mod$se <- predict(tb.model14, pred.mod,
                        type = 'response', se = TRUE)$se.fit
 head(pred.mod)
 
-active <- pred.mod[data.tb$Foraging.mode == 'active', ]
-plastic <- pred.mod[data.tb$Foraging.mode == 'plastic', ]
-sit.and.wait <- pred.mod[data.tb$Foraging.mode == 'sit-and-wait', ]
+active <- pred.mod[pred.mod$Foraging.mode == 'active', ]
+plastic <- pred.mod[pred.mod$Foraging.mode == 'plastic', ]
+sit.and.wait <- pred.mod[pred.mod$Foraging.mode == 'sit-and-wait', ]
 
 
 layout(matrix(c(0, 0, 0, 0,
@@ -1956,9 +2643,9 @@ mtext('A', side = 2, line = 2.7, at = 45, las = 2)
 
 ## Distribution of residuals
 
-res.act <- density(residuals(tb.model9)[data.tb$Foraging.mode == "active"])
-res.pla <- density(residuals(tb.model9)[data.tb$Foraging.mode == "plastic"])
-res.sit <- density(residuals(tb.model9)[data.tb$Foraging.mode == "sit-and-wait"])
+res.act <- density(residuals(tb.model14)[data.tb$Foraging.mode == "active"])
+res.pla <- density(residuals(tb.model14)[data.tb$Foraging.mode == "plastic"])
+res.sit <- density(residuals(tb.model14)[data.tb$Foraging.mode == "sit-and-wait"])
 
 plot(NA, ylim = c(0, max(res.act$y)),
      xlim = c(min(res.pla$x), max(res.pla$x)),
@@ -2007,14 +2694,14 @@ layout(matrix(c(0, 0, 0, 0,
               ncol = 4, byrow = TRUE))
 
 par(mgp = c(3, 1, 0))
-plot(fitted(tb.model9), resid(tb.model9),
+plot(fitted(tb.model14), resid(tb.model9),
      col = "grey", pch = 20, las = 1, xaxt = 'n',
      yaxt = 'n', ylab = '', xlab = '')
 
 grid()
 
 par(new = TRUE)
-plot(fitted(tb.model9), resid(tb.model9),
+plot(fitted(tb.model14), resid(tb.model9),
      col = "grey", pch = 20, xlab = "Fitted",
      ylab = "Residual", main = "Fitted versus Residuals",
      las = 1)
@@ -2024,21 +2711,25 @@ abline(h = 0, col = "darkorange", lwd = 2)
 
 ## Checking normality
 
-qqnorm(resid(tb.model9), col = "darkgrey",
+qqnorm(resid(tb.model14), col = "darkgrey",
        type = 'n', las = 1, main = '', xaxt = 'n',
        yaxt = 'n', xlab = '', ylab = '')
 
 grid()
 
 par(new = TRUE)
-qqnorm(resid(tb.model9), col = "darkgrey", las = 1)
-qqline(resid(tb.model9), col = "dodgerblue", lwd = 2)
+qqnorm(resid(tb.model14), col = "darkgrey", las = 1)
+qqline(resid(tb.model14), col = "dodgerblue", lwd = 2)
 
 ```
 
+
+
+
 ```{r}
 
-genomes <- read.delim("squamates-comparative-genomic-data.tsv",
+
+genomes <- read.delim("data/squamates-comparative-genomic-data.tsv",
                       sep = "\t")
 
 names(genomes)
@@ -2108,27 +2799,32 @@ pruned.geno.size.data$lifetime.rep.out <- (pruned.geno.size.data$Mean.number.of.
 
 pruned.geno.size.data <- pruned.geno.size.data[!is.na(pruned.geno.size.data$lifetime.rep.out), ]
 pruned.geno.size.data$lifetime.rep.out <- log10(pruned.geno.size.data$lifetime.rep.out)
+pruned.geno.size.data$corr.lifetime.rep.out <- residuals(lm(pruned.geno.size.data$lifetime.rep.out ~ pruned.geno.size.data$max.body.mass))
 
-head(pruned.geno.size.data[ , c(1:2, 13, 15, 30)])
+head(pruned.geno.size.data[ , c(1:2, 13, 15, 30, 31)])
+
+pruned.geno.size.data$Foraging.mode[pruned.geno.size.data$Foraging.mode == 1] <- "sit-and-wait"
+pruned.geno.size.data$Foraging.mode[pruned.geno.size.data$Foraging.mode == 2] <- "plastic"
+pruned.geno.size.data$Foraging.mode[pruned.geno.size.data$Foraging.mode == 3] <- "active"
 
 tapply(pruned.geno.size.data$lifetime.rep.out,
        list(pruned.geno.size.data$Foraging.mode), length)
 
 ## Cost of carrying around excessive genetic machinery
 
-cost.model1 <- gls(lifetime.rep.out ~ Foraging.mode*genome.size*max.body.mass,
+cost.model1 <- gls(corr.lifetime.rep.out ~ Foraging.mode*genome.size,
                  correlation =
                          corBrownian(phy = geno.size.tree,
                                      form = ~Species),
                  data = pruned.geno.size.data, method = "ML")
 
-cost.model2 <- gls(lifetime.rep.out ~ Foraging.mode*genome.size + max.body.mass,
+cost.model2 <- gls(corr.lifetime.rep.out ~ Foraging.mode + genome.size,
                  correlation =
                          corBrownian(phy = geno.size.tree,
                                      form = ~Species),
                  data = pruned.geno.size.data, method = "ML")
 
-cost.model3 <- gls(lifetime.rep.out ~ Foraging.mode*genome.size,
+cost.model3 <- gls(corr.lifetime.rep.out ~ Foraging.mode,
                  correlation =
                          corBrownian(phy = geno.size.tree,
                                      form = ~Species),
@@ -2136,112 +2832,179 @@ cost.model3 <- gls(lifetime.rep.out ~ Foraging.mode*genome.size,
 
 
 
-cost.model4 <- gls(lifetime.rep.out ~ Foraging.mode + genome.size + max.body.mass,
+cost.model4 <- gls(corr.lifetime.rep.out ~ genome.size,
                  correlation =
                          corBrownian(phy = geno.size.tree,
                                      form = ~Species),
                      data = pruned.geno.size.data, method = "ML")
-
-
-cost.model5 <- gls(lifetime.rep.out ~ Foraging.mode,
-                 correlation =
-                         corBrownian(phy = geno.size.tree,
-                                     form = ~Species),
-                 data = pruned.geno.size.data, method = "ML")
-
-
-cost.model6 <- gls(lifetime.rep.out ~ genome.size,
-                 correlation =
-                         corBrownian(phy = geno.size.tree,
-                                     form = ~Species),
-                     data = pruned.geno.size.data, method = "ML")
-
-cost.model7 <- gls(lifetime.rep.out ~ max.body.mass,
-                 correlation =
-                         corBrownian(phy = geno.size.tree,
-                                     form = ~Species),
-                     data = pruned.geno.size.data, method = "ML")
-
 
 
 cost.models <- anova(cost.model1, cost.model2,
-                     cost.model3, cost.model4,
-                     cost.model5, cost.model6,
-                     cost.model7)
+                     cost.model3, cost.model4)
 cost.models
+
 
 round(aicw(setNames(cost.models$AIC,
                     rownames(cost.models))), 3)
 
-summary(cost.model7)
+
+summary(cost.model3)
+
+
+## Heterozygosity
+
+He.data <- read.table("data/merged_He_data.txt", header = TRUE, sep = "")
+str(He.data)
+
+He.data$Foraging.mode[He.data$species == "Anolis_brevirostris"] <- "sit-and-wait"
+He.data$Foraging.mode[He.data$species == "Anolis_fuscoauratus"] <- "sit-and-wait"
+He.data$Foraging.mode[He.data$species == "Anolis_krugi"] <- "sit-and-wait"
+
+He.data <- He.data[!He.data$species == "Cerastes_cerastes", ]
+He.data <- He.data[!He.data$species == "Thamnophis_sirtalis", ]
+He.data <- He.data[!He.data$species == "Arizona_elegans", ]
+He.data <- He.data[!He.data$species == "Lampropeltis_getula", ]
+
+He.data <- He.data[He.data$N_SITES >= 100, ]
+He.data$N_HET <- He.data$N_SITES - He.data$O.HOM.
+He.data$He <- He.data$N_HET/He.data$N_SITES
+
+He.species <- aggregate(He.data[c(9, 4)],
+                        list(He.data$Foraging.mode, He.data$species), mean)
+colnames(He.species)[1:2] <- c("Foraging.mode", "species")
+rownames(He.species) <- He.species$species
+##He.species
+
+## prunning the tree
+
+check <- name.check(lizard.tree, He.species)
+rm_phy <- check$tree_not_data
+rm_dat <- check$data_not_tree
+pruned.tree <- drop.tip(lizard.tree, rm_phy)
+
+pruned.he <- subset(He.species,
+                      subset = rownames(He.species) %in% pruned.tree$tip,
+                      select = names(He.species))
+name.check(pruned.tree, pruned.he)
+He <- setNames(pruned.he$He, rownames(pruned.he))
+
+
+active <- pruned.he$species[pruned.he$Foraging.mode == "active"]
+plastic <- pruned.he$species[pruned.he$Foraging.mode == "plastic"]
+sit.and.wait <- pruned.he$species[pruned.he$Foraging.mode == "sit-and-wait"]
+
+## paint the edges
+
+painted.tree1 <- paintBranches(pruned.tree, edge = sapply(sit.and.wait, match, pruned.tree$tip.label),
+                              state = "sit-and-wait", anc.state = "active")
+painted.tree2 <- paintBranches(painted.tree1, 
+                               edge = sapply(plastic, match, painted.tree1$tip.label),
+                               state = "plastic")
+final.tree <- paintBranches(painted.tree2, 
+                            edge = sapply(active, match, painted.tree2$tip.label),
+                            state = "active")
 
 ## plotting results
 
 dim(pruned.geno.size.data)
-pred.mod <- data.frame(max.body.mass = seq(min(pruned.geno.size.data$max.body.mass),
-                                       max(pruned.geno.size.data$max.body.mass),
-                                       len = 57),
-                       genome.size = seq(min(pruned.geno.size.data$genome.size),
+pred.mod <- data.frame(genome.size = seq(min(pruned.geno.size.data$genome.size),
                                        max(pruned.geno.size.data$genome.size),
                                        len = 57),
                        Foraging.mode = pruned.geno.size.data$Foraging.mode,
                        row.names = rownames(pruned.geno.size.data))
 
-pred.mod$lifetime.rep.out <- predict(cost.model4, pred.mod,
+pred.mod$corr.lifetime.rep.out <- predict(cost.model3, pred.mod,
                           type = 'response', se = TRUE)$fit
-pred.mod$se <- predict(cost.model1, pred.mod,
+pred.mod$se <- predict(cost.model3, pred.mod,
                        type = 'response', se = TRUE)$se.fit
 
 
 head(pred.mod)
 
-active <- pred.mod[pruned.geno.size.data$Foraging.mode == 'active', ]
-plastic <- pred.mod[pruned.geno.size.data$Foraging.mode == 'plastic', ]
-sit.and.wait <- pred.mod[pruned.geno.size.data$Foraging.mode == 'sit-and-wait', ]
+active <- pred.mod[pred.mod$Foraging.mode == 'active', ]
+plastic <- pred.mod[pred.mod$Foraging.mode == 'plastic', ]
+sit.and.wait <- pred.mod[pred.mod$Foraging.mode == 'sit-and-wait', ]
 
 
-##png('./imgs/figure3.png', width = 7, height = 7, units = 'in',
+##png('./imgs/figure3_revised.png', width = 7, height = 7, units = 'in',
 ##    res = 360)
 ##pdf('./imgs/figuer3.pdf')
 
 
-layout(matrix(c(0, 0, 0, 0,
-                1, 1, 2, 2,
-                1, 1, 2, 2,
-                0, 0, 0, 0), ncol = 4, nrow = 4, byrow = TRUE))
+
+##layout(matrix(c(1, 1, 2, 2,
+##                1, 1, 2, 2,
+##                2, 2, 2, 2,
+##                2, 2, 2, 2,
+##                2, 2, 2, 2), ncol = 4, nrow = 5, byrow = TRUE))
+
+##layout.show(n = 2)
+
+##cols <- setNames(c("#39568CFF", "green4", "#DCE319FF"),
+##                 c("active", "plastic", "sit-and-wait"))
+
+##par(mar = c(4.5, 4, 0.5, 3), mgp = c(2.5, 1, 0))
+
+##plot(corr.lifetime.rep.out ~ genome.size, data = pruned.geno.size.data,
+##     pch = 21, bg = cols[as.numeric(as.factor(pruned.geno.size.data$Foraging.mode))],
+##     las = 1, xaxt = 'n', yaxt = 'n', xlab = '', ylab = '',
+##     type = 'n', axes = FALSE)
+
+##grid(nx = NULL, ny = NULL, col = "lightgray", lwd = 1)
+##par(new = TRUE)
+
+##plot(corr.lifetime.rep.out ~ genome.size, data = pruned.geno.size.data,
+##     pch = 21, bg = cols[as.numeric(as.factor(pruned.geno.size.data$Foraging.mode))],
+##     col = 'black', las = 1,
+##     xlab = expression("Genome size"~log[10]~(Mb)),
+##     ylab = expression(Log[10]~"clutch size"~x~"clutches per year"~x~"longevity"),
+##     type = 'p', cex.lab = 0.9)
+
+##lines(active$corr.lifetime.rep.out ~ active$genome.size,
+##      data = active, lwd = 2.5, col = '#39568CFF')
+
+##lines(plastic$corr.lifetime.rep.out ~ plastic$genome.size,
+##      data = plastic, lwd = 2.5, col = 'green4')
+
+##lines(sit.and.wait$corr.lifetime.rep.out ~ sit.and.wait$genome.size,
+##      data = sit.and.wait, lwd = 2.5, col = '#DCE319FF')
+
+##legend('topleft',
+##       legend = c('active', 'plastic', 'sit-and-wait'),
+##       pch = 21, pt.bg = c('#39568CFF', 'green4', '#DCE319FF'),
+##       col = c('#39568CFF', 'green4', '#DCE319FF'), lwd = 1,
+##       bty = 'n', cex = 0.8)
+
+##mtext('A', side = 2, at = 1.3, las = 2, line = 3.1)
 
 
-plot(lifetime.rep.out ~ genome.size, data = pruned.geno.size.data,
-     pch = 21, bg = cols[as.numeric(as.factor(pruned.geno.size.data$Foraging.mode))],
-     las = 1, xaxt = 'n', yaxt = 'n', xlab = '', ylab = '',
-     type = 'n', axes = FALSE)
+## tree
 
-grid(nx = NULL, ny = NULL, col = "lightgray", lwd = 1)
-par(new = TRUE)
+##par(mar = c(5.1, 4.1, 4.1, 2.1), mgp = c(3, 1, 0))
+##plot(final.tree, cols, fsize = 0.8, ftype = "i", lwd = 3, offset = 2.3, mar = c(2, 0, 2, 0))
+##legend(x = 0, y = 0.5, legend = c("active", "plastic", "sit-and-wait"),
+##       lwd = 2, bty = "n", col = cols, cex = 0.9, xpd = TRUE)
 
-plot(lifetime.rep.out ~ genome.size, data = pruned.geno.size.data,
-     pch = 21, bg = cols[as.numeric(as.factor(pruned.geno.size.data$Foraging.mode))],
-     col = 'black', las = 1,
-     xlab = expression("Genome size"~log[10]~(Mb)),
-     ylab = expression(Log[10]~"clutch size"~x~"clutches per year"~x~"longevity"),
-     type = 'p')
+##par(new = TRUE)
+##par(mar = c(2, 41.7, 2, 9.4))
+##barplot(He[pruned.tree$tip.label], horiz = TRUE, width = 1, space = 0,
+##        ylim = c(1, length(pruned.tree$tip.label))-0.5, names = "", las = 2,
+##        cex.axis = 0.5, axes = FALSE)
 
-lines(active$lifetime.rep.out ~ active$genome.size,
-      data = active, lwd = 2.5, col = '#39568CFF')
+##axis(1, at = seq(min(He), max(He), 0.07), labels = FALSE, line = -1)
+##text(round(seq(min(He), max(He), 0.07), 2), par("usr")[3] + 0.7,
+##     labels = round(seq(min(He), max(He), 0.07), 2), srt = 50, pos = 1,
+##     xpd = TRUE, cex = 0.5, offset = 1)
 
-lines(plastic$lifetime.rep.out ~ plastic$genome.size,
-      data = plastic, lwd = 2.5, col = 'green4')
+##mtext("Heterozygosity (He)", side = 1, line = 0.5, cex = 0.5, font = 2)
 
-lines(sit.and.wait$lifetime.rep.out ~ sit.and.wait$genome.size,
-      data = sit.and.wait, lwd = 2.5, col = '#DCE319FF')
+##dev.off()
 
-legend('topleft',
-       legend = c('active', 'plastic', 'sit-and-wait'),
-       pch = 21, pt.bg = c('#39568CFF', 'green4', '#DCE319FF'),
-       col = c('#39568CFF', 'green4', '#DCE319FF'), lwd = 1,
-       bty = 'n', cex = 0.8)
-mtext('A', side = 2, at = 3.7, las = 2, line = 3.1)
+```
 
+
+
+```{r, eval = FALSE}
 
 
 par(mgp = c(2.5, 1, 0))
@@ -2300,6 +3063,50 @@ mtext('B', side = 2, at = 9.56, las = 2, line = 3.1)
 
 
 
+## taking body size out
+
+cost.model1 <- gls(corr.lifetime.rep.out ~ Foraging.mode*genome.size,
+                 correlation =
+                         corBrownian(phy = geno.size.tree,
+                                     form = ~Species),
+                 data = pruned.geno.size.data, method = "ML")
+
+cost.model2 <- gls(corr.lifetime.rep.out ~ Foraging.mode + genome.size,
+                 correlation =
+                         corBrownian(phy = geno.size.tree,
+                                     form = ~Species),
+                 data = pruned.geno.size.data, method = "ML")
+
+cost.model3 <- gls(corr.lifetime.rep.out ~ Foraging.mode,
+                 correlation =
+                         corBrownian(phy = geno.size.tree,
+                                     form = ~Species),
+                 data = pruned.geno.size.data, method = "ML")
+
+
+
+cost.model4 <- gls(corr.lifetime.rep.out ~ genome.size,
+                 correlation =
+                         corBrownian(phy = geno.size.tree,
+                                     form = ~Species),
+                     data = pruned.geno.size.data, method = "ML")
+
+
+
+cost.models <- anova(cost.model1, cost.model2,
+                     cost.model3, cost.model4)
+
+
+cost.models
+
+
+round(aicw(setNames(cost.models$AIC,
+                    rownames(cost.models))), 3)
+
+
+summary(cost.model3)
+
+
 ## Examining genome size among species
 
 size.model1 <- gls(genome.size ~ Foraging.mode*max.body.mass,
@@ -2343,29 +3150,41 @@ tapply(X = pruned.geno.size.data$genome.size, INDEX = list(pruned.geno.size.data
 
 ```{r, eval = FALSE}
 
-pred.mod <- data.frame(max.body.mass = seq(min(pruned.geno.size.data$max.body.mass),
-                                       max(pruned.geno.size.data$max.body.mass),
-                                       len = 57),
-                       genome.size = seq(min(pruned.geno.size.data$genome.size),
+
+
+
+##png('./imgs/figure3_revised.png', width = 7, height = 7, units = 'in',
+##    res = 360)
+##pdf('./imgs/figuer3.pdf')
+
+
+dim(pruned.geno.size.data)
+pred.mod <- data.frame(genome.size = seq(min(pruned.geno.size.data$genome.size),
                                        max(pruned.geno.size.data$genome.size),
                                        len = 57),
                        Foraging.mode = pruned.geno.size.data$Foraging.mode,
                        row.names = rownames(pruned.geno.size.data))
 
-pred.mod$lifetime.rep.out <- predict(cost.model4, pred.mod,
+pred.mod$corr.lifetime.rep.out <- predict(cost.model3, pred.mod,
                           type = 'response', se = TRUE)$fit
-pred.mod$se <- predict(cost.model1, pred.mod,
+pred.mod$se <- predict(cost.model3, pred.mod,
                        type = 'response', se = TRUE)$se.fit
 
 
 head(pred.mod)
 
-active <- pred.mod[pruned.geno.size.data$Foraging.mode == 'active', ]
-plastic <- pred.mod[pruned.geno.size.data$Foraging.mode == 'plastic', ]
-sit.and.wait <- pred.mod[pruned.geno.size.data$Foraging.mode == 'sit-and-wait', ]
+active <- pred.mod[pred.mod$Foraging.mode == 'active', ]
+plastic <- pred.mod[pred.mod$Foraging.mode == 'plastic', ]
+sit.and.wait <- pred.mod[pred.mod$Foraging.mode == 'sit-and-wait', ]
 
 
-plot(lifetime.rep.out ~ max.body.mass, data = pruned.geno.size.data,
+layout(matrix(c(0, 1, 1, 0,
+                0, 1, 1, 0,
+                0, 2, 2, 0,
+                0, 2, 2, 0), ncol = 4, nrow = 4, byrow = TRUE))
+
+
+plot(corr.lifetime.rep.out ~ genome.size, data = pruned.geno.size.data,
      pch = 21, bg = cols[as.numeric(as.factor(pruned.geno.size.data$Foraging.mode))],
      las = 1, xaxt = 'n', yaxt = 'n', xlab = '', ylab = '',
      type = 'n', axes = FALSE)
@@ -2373,20 +3192,20 @@ plot(lifetime.rep.out ~ max.body.mass, data = pruned.geno.size.data,
 grid(nx = NULL, ny = NULL, col = "lightgray", lwd = 1)
 par(new = TRUE)
 
-plot(lifetime.rep.out ~ max.body.mass, data = pruned.geno.size.data,
+plot(corr.lifetime.rep.out ~ genome.size, data = pruned.geno.size.data,
      pch = 21, bg = cols[as.numeric(as.factor(pruned.geno.size.data$Foraging.mode))],
      col = 'black', las = 1,
-     xlab = expression("Maximum body mass"~log[10]~(g)),
+     xlab = expression("Genome size"~log[10]~(Mb)),
      ylab = expression(Log[10]~"clutch size"~x~"clutches per year"~x~"longevity"),
      type = 'p')
 
-lines(active$lifetime.rep.out ~ active$max.body.mass,
+lines(active$corr.lifetime.rep.out ~ active$genome.size,
       data = active, lwd = 2.5, col = '#39568CFF')
 
-lines(plastic$lifetime.rep.out ~ plastic$max.body.mass,
+lines(plastic$corr.lifetime.rep.out ~ plastic$genome.size,
       data = plastic, lwd = 2.5, col = 'green4')
 
-lines(sit.and.wait$lifetime.rep.out ~ sit.and.wait$max.body.mass,
+lines(sit.and.wait$corr.lifetime.rep.out ~ sit.and.wait$genome.size,
       data = sit.and.wait, lwd = 2.5, col = '#DCE319FF')
 
 legend('topleft',
@@ -2394,7 +3213,62 @@ legend('topleft',
        pch = 21, pt.bg = c('#39568CFF', 'green4', '#DCE319FF'),
        col = c('#39568CFF', 'green4', '#DCE319FF'), lwd = 1,
        bty = 'n', cex = 0.8)
-mtext('B', side = 2, at = 3.7, las = 2, line = 3.1)
+mtext('A', side = 2, at = 0.95, las = 2, line = 3.1)
+
+
+
+## Genome size
+
+
+
+pred.mod <- data.frame(max.body.mass = seq(min(pruned.geno.size.data$max.body.mass),
+                                       max(pruned.geno.size.data$max.body.mass),
+                                       len = 57),
+                       Foraging.mode = pruned.geno.size.data$Foraging.mode,
+                       row.names = rownames(pruned.geno.size.data))
+
+pred.mod$genome.size <- predict(size.model1, pred.mod,
+                          type = 'response', se = TRUE)$fit
+pred.mod$se <- predict(size.model1, pred.mod,
+                       type = 'response', se = TRUE)$se.fit
+
+
+head(pred.mod)
+
+active <- pred.mod[pred.mod$Foraging.mode == 'active', ]
+plastic <- pred.mod[pred.mod$Foraging.mode == 'plastic', ]
+sit.and.wait <- pred.mod[pred.mod$Foraging.mode == 'sit-and-wait', ]
+
+plot(genome.size ~ max.body.mass, data = pruned.geno.size.data,
+     pch = 21, bg = cols[as.numeric(as.factor(pruned.geno.size.data$Foraging.mode))],
+     las = 1, xaxt = 'n', yaxt = 'n', xlab = '', ylab = '',
+     type = 'n', axes = FALSE)
+
+grid(nx = NULL, ny = NULL, col = "lightgray", lwd = 1)
+par(new = TRUE)
+
+plot(genome.size ~ max.body.mass, data = pruned.geno.size.data,
+     pch = 21, bg = cols[as.numeric(as.factor(pruned.geno.size.data$Foraging.mode))],
+     col = 'black', las = 1,
+     xlab = expression("Maximum body mass"~log[10]~(g)),
+     ylab = expression(Log[10]~"Genome size"),
+     type = 'p')
+
+lines(active$genome.size ~ active$max.body.mass,
+      data = active, lwd = 2.5, col = '#39568CFF')
+
+lines(plastic$genome.size ~ plastic$max.body.mass,
+      data = plastic, lwd = 2.5, col = 'green4')
+
+lines(sit.and.wait$genome.size ~ sit.and.wait$max.body.mass,
+      data = sit.and.wait, lwd = 2.5, col = '#DCE319FF')
+
+legend('bottomright',
+       legend = c('active', 'plastic', 'sit-and-wait'),
+       pch = 21, pt.bg = c('#39568CFF', 'green4', '#DCE319FF'),
+       col = c('#39568CFF', 'green4', '#DCE319FF'), lwd = 1,
+       bty = 'n', cex = 0.8)
+mtext('B', side = 2, at = 9.56, las = 2, line = 3.1)
 
 
 ##dev.off()
@@ -2436,7 +3310,7 @@ plot1 + as.layer(plot2)
 ```
 
 
-```{r}
+```{r, eval = FALSE}
 
 gc.data <- read.csv("squamate-gc-values.csv")
 str(gc.data)
@@ -2541,7 +3415,7 @@ xyplot(c.value ~ max.body.mass | Foraging.mode,
 ```
 
 
-```{r}
+```{r, eval = FALSE}
 
 geno.alt.data <- read.delim('genome_size_alternative.tsv',
                         sep = '\t')
@@ -2739,7 +3613,7 @@ legend('bottomleft',
 ```
 
 
-```{r}
+```{r, eval = FALSE}
 
 ## setting up the data of protein coding genes
 
@@ -2906,7 +3780,7 @@ legend('topleft',
 
 ```
 
-```{r}
+```{r, eval = FALSE}
 
 ## model diagnosis
 
@@ -2947,13 +3821,13 @@ qqline(resid(gene.model12), col = "dodgerblue", lwd = 2)
 ```
 
 
-```{r}
+```{r, eval = FALSE}
 
 ## looking for species with multiple genomes
 
 dupl.genomes <- tapply(genomes$Assembly.Accession,
                        list(genomes$Organism.Name), length)
-((mult.genomes <- dupl.genomes[dupl.genomes > 2]))
+mult.genomes <- dupl.genomes[dupl.genomes > 2]
 spp <- names(mult.genomes)
 
 ## getting the accession number of the genomes
@@ -2975,7 +3849,7 @@ mult.genomes.forg[c(1, 12)]
 
 ```
 
-```{r}
+```{r, eval = FALSE}
 
 
 sagrei.nd <- read.delim('A.sagrei_pi.windowed.pi', sep = '\t')
@@ -3504,7 +4378,7 @@ text(x = 1:length(d.chr.muralis$CHROM), y = -0.029,
 
 
 
-```{r}
+```{r, eval = FALSE}
 
 
 ##png('./imgs/figure6.png', width = 7, height = 7, units = 'in',
@@ -3598,3 +4472,540 @@ mtext('Genomic position', at = -3, side = 1, line = 3)
 
 ```
 
+
+```{r}
+
+## Modeling heterozygosity
+
+
+He.data <- read.table("data/merged_He_data.txt", header = TRUE, sep = "")
+str(He.data)
+
+He.data$Foraging.mode[He.data$species == "Anolis_brevirostris"] <- "sit-and-wait"
+He.data$Foraging.mode[He.data$species == "Anolis_fuscoauratus"] <- "sit-and-wait"
+He.data$Foraging.mode[He.data$species == "Anolis_krugi"] <- "sit-and-wait"
+
+He.data <- He.data[!He.data$species == "Cerastes_cerastes", ]
+He.data <- He.data[!He.data$species == "Thamnophis_sirtalis", ]
+He.data <- He.data[!He.data$species == "Arizona_elegans", ]
+He.data <- He.data[!He.data$species == "Lampropeltis_getula", ]
+
+He.data <- He.data[He.data$N_SITES >= 100, ]
+He.data$N_HET <- He.data$N_SITES - He.data$O.HOM.
+He.data$He <- He.data$N_HET/He.data$N_SITES
+
+He.species <- aggregate(He.data[c(9, 4)],
+                        list(He.data$Foraging.mode, He.data$species), mean)
+colnames(He.species)[1:2] <- c("Foraging.mode", "species")
+rownames(He.species) <- He.species$species
+##He.species
+
+mrg.dat <- pruned.data.mrg[c(1, 14, 29, 31)]
+colnames(mrg.dat)[1] <- "species"
+
+mod.he <- merge(He.species, mrg.dat, by = "species")
+colnames(mod.he)[c(5, 6, 7)] <- c("body.mass", "range", "life.repro.output")
+row.names(mod.he) <- mod.he$species
+mod.he$N_SITES <- log10(mod.he$N_SITES)
+mod.he$He_corr <- residuals(gls(He ~ body.mass,
+                 correlation = corBrownian(phy = pruned.tree,
+                                           form = ~species),
+                 data = mod.he, method = "ML"))
+
+mod.he <- mod.he[!is.na(mod.he$life.repro.output), ]
+
+
+## prunning the tree
+
+check <- name.check(lizard.tree, mod.he)
+rm_phy <- check$tree_not_data
+rm_dat <- check$data_not_tree
+pruned.tree <- drop.tip(lizard.tree, rm_phy)
+
+pruned.he <- subset(mod.he,
+                      subset = rownames(mod.he) %in% pruned.tree$tip,
+                      select = names(mod.he))
+name.check(pruned.tree, pruned.he)
+He <- setNames(pruned.he$He, rownames(pruned.he))
+
+
+model.he1 <- gls(life.repro.output ~ He*Foraging.mode + N_SITES + range
+                + body.mass,
+                 correlation = corBrownian(phy = pruned.tree,
+                                           form = ~species),
+                 data = pruned.he, method = "ML")
+
+model.he2 <- gls(life.repro.output ~ He + Foraging.mode*range + N_SITES +
+                body.mass,
+                 correlation = corBrownian(phy = pruned.tree,
+                                           form = ~species),
+                 data = pruned.he, method = "ML")
+
+model.he3 <- gls(life.repro.output ~ He + Foraging.mode + range + N_SITES +
+                body.mass,
+                 correlation = corBrownian(phy = pruned.tree,
+                                           form = ~species),
+                 data = pruned.he, method = "ML")
+
+model.he4 <- gls(life.repro.output ~ He + Foraging.mode + N_SITES +
+                body.mass,
+                 correlation = corBrownian(phy = pruned.tree,
+                                           form = ~species),
+                 data = pruned.he, method = "ML")
+
+model.he5 <- gls(life.repro.output ~ He + Foraging.mode + N_SITES +
+                range,
+                 correlation = corBrownian(phy = pruned.tree,
+                                           form = ~species),
+                 data = pruned.he, method = "ML")
+
+model.hes <- anova(model.he1, model.he2,
+                   model.he3, model.he4,
+                   model.he5)
+
+round(aicw(setNames(model.hes$AIC,
+              rownames(model.hes))), 3)
+summary(model.he1)
+anova(model.he1)
+
+
+```
+
+
+```{r, eval = FALSE}
+
+
+dim(pruned.he)
+pred.mod <- data.frame(body.mass = seq(min(pruned.he$body.mass),
+                                       max(pruned.he$body.mass),
+                                       len = 22),
+                       He = seq(min(pruned.he$He),
+                                       max(pruned.he$He),
+                                       len = 22),
+                       N_SITES = seq(min(pruned.he$N_SITES),
+                                       max(pruned.he$N_SITES),
+                                     len = 22),
+                       range = seq(min(pruned.he$range),
+                                       max(pruned.he$range),
+                                       len = 22),
+                       Foraging.mode = pruned.he$Foraging.mode,
+                       row.names = rownames(pruned.he))
+pred.mod$life.repro.output <- predict(model.he1, pred.mod,
+                          type = 'response', se = TRUE)$fit
+pred.mod$se <- predict(model.he1, pred.mod,
+                       type = 'response', se = TRUE)$se.fit
+head(pred.mod)
+
+active <- pred.mod[pred.mod$Foraging.mode == 'active', ]
+plastic <- pred.mod[pred.mod$Foraging.mode == 'plastic', ]
+sit.and.wait <- pred.mod[pred.mod$Foraging.mode == 'sit-and-wait', ]
+
+pruned.he$Foraging.mode <- as.factor(pruned.he$Foraging.mode)
+
+
+cols <- setNames(c('#39568CFF', 'green4', '#DCE319FF'),
+                 c('active', 'plastic', 'sit-and-wait'))
+
+plot(life.repro.output ~ He, data = pruned.he,
+     pch = 21, bg = cols[pruned.he$Foraging.mode],
+     las = 1, xaxt = 'n', yaxt = 'n', xlab = '', ylab = '',
+     type = 'n', axes = FALSE)
+
+grid(nx = NULL, ny = NULL, col = "lightgray", lwd = 1)
+par(new = TRUE)
+
+plot(life.repro.output ~ He, data = pruned.he,
+     pch = 21, bg = cols[pruned.he$Foraging.mode],
+     col = 'black', las = 1,
+     xlab = expression("Heterozygosity"~(H[e])),
+     ylab = expression(Log[10]~"clutch size x number of clutches x longevity"),
+     type = 'p')
+
+lines(active$life.repro.output ~ active$He,
+      data = active, lwd = 2.5, col = '#39568CFF')
+
+lines(plastic$life.repro.output ~ plastic$He,
+      data = plastic, lwd = 2.5, col = 'green4')
+
+lines(sit.and.wait$life.repro.output ~ sit.and.wait$He,
+      data = sit.and.wait, lwd = 2.5, col = '#DCE319FF')
+
+legend('topleft',
+       legend = c('active', 'plastic', 'sit-and-wait'),
+       pch = 21, pt.bg = c('#39568CFF', 'green4', '#DCE319FF'),
+       col = c('#39568CFF', 'green4', '#DCE319FF'), lwd = 1,
+       bty = 'n', cex = 0.8)
+
+
+```
+
+
+```{r}
+
+
+##png('./imgs/figure3_revised.png', width = 7, height = 7, units = 'in',
+##    res = 360)
+
+layout(matrix(c(1, 1, 2, 2,
+                1, 1, 2, 2,
+                2, 2, 2, 2,
+                2, 2, 2, 2,
+                2, 2, 2, 2), ncol = 4, nrow = 5, byrow = TRUE))
+
+
+# 1. Define the continuous shared range for your numeric variables
+he_seq <- seq(min(pruned.he$He), max(pruned.he$He), len = 50) # bumped to 50 for smoother lines
+bm_mean <- mean(pruned.he$body.mass)
+ns_mean <- mean(pruned.he$N_SITES)
+rg_mean <- mean(pruned.he$range)
+modes <- c('active', 'plastic', 'sit-and-wait')
+
+# 2. Use expand.grid to combine every combination of He and Foraging.mode
+# (Note: Holding other covariates at their mean is standard practice for visualizing main effects)
+pred.mod <- expand.grid(He = he_seq, Foraging.mode = modes)
+pred.mod$body.mass <- bm_mean
+pred.mod$N_SITES <- ns_mean
+pred.mod$range <- rg_mean
+
+# 3. Run your predictions exactly as you did before
+pred.mod$life.repro.output <- predict(model.he1, pred.mod, type = 'response', se = TRUE)$fit
+pred.mod$se <- predict(model.he1, pred.mod, type = 'response', se = TRUE)$se.fit
+
+# 4. Subset the newly balanced dataset
+active <- pred.mod[pred.mod$Foraging.mode == 'active', ]
+plastic <- pred.mod[pred.mod$Foraging.mode == 'plastic', ]
+sit.and.wait <- pred.mod[pred.mod$Foraging.mode == 'sit-and-wait', ]
+
+cols <- setNames(c("#39568CFF", "green4", "#DCE319FF"),
+                 c("active", "plastic", "sit-and-wait"))
+
+
+par(mar = c(5.8, 4, 0.5, 4.8), mgp = c(2.5, 1, 0))
+
+plot(life.repro.output ~ He, data = pruned.he,
+     pch = 21, bg = cols[pruned.he$Foraging.mode],
+     las = 1, xaxt = 'n', yaxt = 'n', xlab = '', ylab = '',
+     type = 'n', axes = FALSE)
+
+grid(nx = NULL, ny = NULL, col = "lightgray", lwd = 1)
+par(new = TRUE)
+
+plot(life.repro.output ~ He, data = pruned.he,
+     pch = 21, bg = cols[pruned.he$Foraging.mode],
+     col = 'black', las = 1,
+     xlab = expression("Heterozygosity"~(H[e])),
+     ylab = expression(Log[10]~"clutch size x number of clutches x longevity"),
+     type = 'p', cex.lab = 0.8)
+
+lines(active$life.repro.output ~ active$He,
+      data = active, lwd = 2.5, col = '#39568CFF')
+
+lines(plastic$life.repro.output ~ plastic$He,
+      data = plastic, lwd = 2.5, col = 'green4')
+
+lines(sit.and.wait$life.repro.output ~ sit.and.wait$He,
+      data = sit.and.wait, lwd = 2.5, col = '#DCE319FF')
+
+legend('topright',
+       legend = c('active', 'plastic', 'sit-and-wait'),
+       pch = 21, pt.bg = c('#39568CFF', 'green4', '#DCE319FF'),
+       col = c('#39568CFF', 'green4', '#DCE319FF'), lwd = 1,
+       bty = 'n', cex = 0.8)
+
+
+## tree
+
+active <- pruned.he$species[pruned.he$Foraging.mode == "active"]
+plastic <- pruned.he$species[pruned.he$Foraging.mode == "plastic"]
+sit.and.wait <- pruned.he$species[pruned.he$Foraging.mode == "sit-and-wait"]
+
+## paint the edges
+
+painted.tree1 <- paintBranches(pruned.tree, edge = sapply(sit.and.wait, match, pruned.tree$tip.label),
+                              state = "sit-and-wait", anc.state = "active")
+painted.tree2 <- paintBranches(painted.tree1, 
+                               edge = sapply(plastic, match, painted.tree1$tip.label),
+                               state = "plastic")
+final.tree <- paintBranches(painted.tree2, 
+                            edge = sapply(active, match, painted.tree2$tip.label),
+                            state = "active")
+He <- setNames(pruned.he$He, rownames(pruned.he))
+
+par(mar = c(5.1, 4.1, 4.1, 2.1), mgp = c(3, 1, 0))
+plot(final.tree, cols, fsize = 0.8, ftype = "i", lwd = 3, offset = 2.3, mar = c(2, 0, 2, 0))
+legend(x = 0, y = 1, legend = c("active", "plastic", "sit-and-wait"),
+       lwd = 2, bty = "n", col = cols, cex = 0.9, xpd = TRUE)
+
+par(new = TRUE)
+par(mar = c(2, 43.7, 2, 7.6))
+barplot(He[pruned.tree$tip.label], horiz = TRUE, width = 1, space = 0,
+        ylim = c(1, length(pruned.tree$tip.label))-0.5, names = "", las = 2,
+        cex.axis = 0.5, axes = FALSE)
+
+axis(1, at = c(0, 0.12, 0.25), labels = FALSE, line = -0.5)
+text(round(seq(0, max(He), len = 3), 2), par("usr")[3] + 0.7,
+     labels = round(seq(0, max(He), len = 3), 2), srt = 50, pos = 1,
+     xpd = TRUE, cex = 0.5, offset = 1.9)
+
+mtext("Heterozygosity (He)", side = 1, line = 0.8, cex = 0.5, font = 2)
+
+##dev.off()
+
+
+```
+
+
+```{r}
+
+
+## corHMM analysis
+
+
+names(pruned.data)
+head(pruned.data$Microhabitat)
+pruned.data$Microhabitat <- as.character(pruned.data$Microhabitat)
+pruned.data$Foraging.mode[pruned.data$Foraging.mode == 3] <- "active"
+pruned.data$Foraging.mode[pruned.data$Foraging.mode == 2] <- "plastic"
+pruned.data$Foraging.mode[pruned.data$Foraging.mode == 1] <- "sit-and-wait"
+##pruned.data$Foraging.mode <- as.character(pruned.data$Foraging.mode)
+
+
+## filtering out plastic foragers
+
+data.hab <- pruned.data[pruned.data$Foraging.mode != "plastic", c(1, 6, 12)]
+unique(data.hab$Foraging.mode)
+
+## fliterung out anything that is not arboreal and terrestrial
+
+lev <- c("Arboreal", "Terrestrial")
+data.hab <- data.hab[data.hab$Microhabitat %in% lev, ]
+unique(data.hab$Microhabitat)
+str(data.hab)
+head(data.hab)
+
+## prunning the tree
+
+check <- name.check(lizard.tree, data.hab)
+rm_phy <- check$tree_not_data
+rm_dat <- check$data_not_tree
+pruned.tree <- drop.tip(lizard.tree, rm_phy)
+
+pruned.hab <- subset(data.hab,
+                      subset = rownames(data.hab) %in% pruned.tree$tip,
+                      select = names(data.hab))
+name.check(pruned.tree, pruned.hab)
+
+
+
+## setting up characters for the model
+
+pruned.hab$Foraging.mode[pruned.hab$Foraging.mode == "active"] <- 0
+pruned.hab$Foraging.mode[pruned.hab$Foraging.mode == "sit-and-wait"] <- 1
+
+
+pruned.hab$Microhabitat[pruned.hab$Microhabitat == "Arboreal"] <- 0
+pruned.hab$Microhabitat[pruned.hab$Microhabitat == "Terrestrial"] <- 1
+
+str(pruned.hab)
+
+## fitting the model
+
+HMM_3state_SYM <- corHMM(phy = pruned.tree, data = pruned.hab, rate.cat = 2,
+                     model = "SYM", get.tip.states = TRUE)
+HMM_3state_ER <- corHMM(phy = pruned.tree, data = pruned.hab, rate.cat = 2,
+                        model = "ER", get.tip.states = TRUE)
+HMM_3state_ARD <- corHMM(phy = pruned.tree, data = pruned.hab, rate.cat = 2,
+                     model = "ARD", get.tip.states = TRUE)
+
+HMM_3state_SYM
+c(HMM_3state_SYM$AICc, HMM_3state_ER$AICc, HMM_3state_ARD$AICc)
+
+##plotMKmodel(HMM_3state_SYM, display = "row")
+
+
+## this yields the estimated proportion of tips in each of the 4 states
+colMeans(HMM_3state_ER$tip.states)
+
+prob_values <- colMeans(HMM_3state_ER$tip.states)
+
+## Summing across regimes to get overall physical state percentages
+## State 1 (Active/Arboreal): prob_values[1] + prob_values[5]
+## State 2 (Active/Terrestrial): prob_values[2] + prob_values[6]
+## State 3 (Sit-and-Wait/Arboreal): prob_values[3] + prob_values[7]
+## State 4 (Sit-and-Wait/Terrestrial): prob_values[4] + prob_values[8]
+
+act_arb <- (prob_values[1] + prob_values[5]) * 100
+act_terr <- (prob_values[2] + prob_values[6]) * 100
+saw_arb <- (prob_values[3] + prob_values[7]) * 100
+saw_terr <- (prob_values[4] + prob_values[8]) * 100
+
+## Create matrices formatted for base R's barplot()
+## Matrix A: Stacked proportions (Rows = Microhabitat, Columns = Foraging)
+
+matrix_a <- matrix(
+  c(act_arb, act_terr, saw_arb, saw_terr), 
+  nrow = 2, 
+  dimnames = list(c("arboreal", "terrestrial"), c("active", "sit-and-wait"))
+)
+
+## Matrix B: Grouped regimes (Rows = Regimes, Columns = Combined States)
+matrix_b <- matrix(
+  c(prob_values[1], prob_values[5],  # Active / Arboreal
+    prob_values[2], prob_values[6],  # Active / Terrestrial
+    prob_values[3], prob_values[7],  # Sit-and-Wait / Arboreal
+    prob_values[4], prob_values[8]), # Sit-and-Wait / Terrestrial
+  nrow = 2,
+  dimnames = list(c("regime 1 (fast)", "regime 2 (slow)"), 
+                  c("active\narboreal", "active\nterrestrial", 
+                    "sit-and-wait\narboreal", "sit-and-wait\nterrestrial"))
+) * 100 ## Convert to percentages
+
+## Plotting setup (2-panel vertical layout)
+
+## Set up a high-resolution export (Uncomment to save directly as TIFF)
+## tiff("foraging_habitat_association_baseR.tiff", width = 7, height = 9, 
+##      units = "in", res = 300, compression = "lzw")
+
+## Configure a 2-row, 1-column layout with clean margins
+##par(mfrow = c(2, 1), mar = c(5, 5, 4, 10), xpd = TRUE, las = 1)
+
+## Color palettes (Color-blind friendly & elegant)
+colors_a <- c("#2D708EFF", "#FDE725FF") # Blue for Arboreal, Yellow for Terrestrial
+colors_b <- c("#85D4E3", "#F4B5BD")     # Muted Teal and Rose for Regimes
+
+
+##png('./imgs/figure5.png', width = 7, height = 7, units = 'in',
+##    res = 360)
+
+
+layout(matrix(c(0, 1, 1, 0,
+                0, 1, 1, 0,
+                0, 2, 2, 0,
+                0, 2, 2, 0), nrow = 4, ncol = 4, byrow = TRUE))
+
+## Panel A: Overall Joint Probabilities (Stacked Bar)
+
+
+bp_a <- barplot(
+  matrix_a, 
+  col = "white", 
+  border = "white",
+  width = 0.5,
+  space = 0.8,
+  xlim = c(0, 2),
+  ylim = c(0, 100),  
+  ylab = "",
+ ## main = "A. Microhabitat Distribution by Foraging Mode",
+#  font.main = 2, 
+#  cex.main = 1.1,
+#  font.lab = 2,
+  axes = FALSE,
+  xaxt = "n"
+)
+
+grid()
+par(new = TRUE)
+
+bp_a <- barplot(
+  matrix_a, 
+  col = colors_a, 
+  border = "black",
+  width = 0.5,
+  space = 0.8,
+  xlim = c(0, 2),
+  ylim = c(0, 100),
+  ylab = "Percentage of lineages (%)",
+  xlab = "Foraging behavior",
+ ## main = "A. Microhabitat Distribution by Foraging Mode",
+#  font.main = 2, 
+#  cex.main = 1.1,
+#  font.lab = 2,
+  axes = TRUE,
+  las = 1,
+)
+
+
+## Add text labels inside the stacked bars for clarity
+
+text(bp_a[1], act_arb / 2, paste0(round(act_arb, 1), "%"),
+     col = "white", font = 2)
+text(bp_a[1], act_arb + (act_terr / 2), paste0(round(act_terr, 1), "%"),
+     col = "black", font = 2)
+text(bp_a[2], saw_arb / 2, paste0(round(saw_arb, 1), "%"),
+     col = "white", font = 2)
+text(bp_a[2], saw_arb + (saw_terr / 2), paste0(round(saw_terr, 1), "%"),
+     col = "black", font = 2)
+
+## Place legend cleanly outside the plotting region
+legend(
+    ##  x = 2.1, y = 80,
+  "topleft",  
+  legend = rownames(matrix_a), 
+  fill = colors_a, 
+  title = "microhabitat", 
+  bty = "n", 
+  ##title.font = 2
+
+)
+
+box()
+mtext("A", side = 2, at = 115, line = 2.9, las = 2)    
+
+
+
+## Panel B: Regime Breakdown (Grouped Bar)
+
+bp_b <- barplot(
+  matrix_b, 
+  beside = TRUE, 
+  col = "white", 
+  border = "white",
+  ylab = "",
+##  main = "B. Evolutionary Rates (Regimes) Breakdown",
+##  font.main = 2, 
+##  font.lab = 2,
+  cex.names = 0.8,
+  xaxt = "n",
+  axes = FALSE
+##  xlab = "Combined phenotypic state",
+##  ylim = c(0, 50)
+)
+
+grid()
+par(new = TRUE)
+
+bp_b <- barplot(
+  matrix_b, 
+  beside = TRUE, 
+  col = colors_b, 
+  border = "black",
+  ylab = "Total tree representation (%)",
+##  main = "B. Evolutionary Rates (Regimes) Breakdown",
+##  font.main = 2, 
+##  font.lab = 2,
+  cex.names = 0.8,
+  xlab = "Combined phenotypic state",
+  ylim = c(0, 50),
+  las = 1
+)
+
+
+## Place legend cleanly outside the plotting region
+legend(
+    ##  x = 13.5, y = 40,
+  "topleft",  
+  legend = rownames(matrix_b), 
+  fill = colors_b, 
+  title = "rate category", 
+  bty = "n"
+#  title.font = 2
+)
+
+box()
+
+mtext("B", side = 2, at = 60, line = 2.9, las = 2)    
+
+##dev.off()
+
+
+```
